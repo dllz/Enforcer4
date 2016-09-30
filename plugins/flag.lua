@@ -30,6 +30,7 @@ local function get_mods_id(chat_id)
 			table.insert(ids, admin.user.id)
 		end
     end
+	--print("Collected number"..#ids)
     return ids
 end
 
@@ -44,11 +45,13 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 	counter = 0
 	result = {}
 	adminID = {}
+	--print("Sending mods"..#mods)
     for i=1,#mods do
 		--print('1001'..i)
         api.forwardMessage(mods[i], chat, msg_id)
 		--print('101'..i)
 		local temp
+		--print("MOD ID:"..mods[i])
 		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..msg_id)
 		--print("CODE: ", code)
 		--print("DATADUMP:", dump(temp))

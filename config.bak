@@ -1,51 +1,21 @@
 return {
-	--bot_api_key = '197411681:AAHS4-oLnyOhCj4FKoLklK8MvzRKS4tQ2vA',
-	bot_api_key = '218011713:AAHBI2-AaBB89kwlGZFPGspUS0k7q0keQy4',
+	bot_api_key = '218011713:AAEVN6YeNYdZogzchLA5TFDlF46-RoBl1b8',
 	version = '3.1', -- /aupdate for v3.1
 	testing_mode = false,
-	admin =
-	{
+	admin = {
 		owner = 125311351,
-		admins =
-		{	
+		admins = {
 		      [95890871] = false,--Pierre CloneMMDDCCVVII
 		      [125311351] = true,--Daniel Blade Zero
-		      [129046388] = true,--Para
-		      [133439848] = false,--Amelia Rat
-    		},
-		superAdmins = {
-			[95890871] = true,--Pierre CloneMMDDCCVVII
-		      [125311351] = true,--Daniel Blade Zero
-		      [114566255] = false,--Bella Nutella Pup
-		      [133748469] = false,--Renatone
-		      [129046388] = true,--Para
-			  [218056872] = true,--Ermenegildo
-		      [133439848] = false,--Amelia Rat
-			[219387852] = true,--Aurora
-			[23776848] = true,--Melisa
-			[263451571] = true, -- Michelle
-		},
-		
-		wwGlobalAdmins = {
-			[95890871] = true,--Pierre CloneMMDDCCVVII
 		      [114566255] = true,--Bella Nutella Pup
 		      [133748469] = false,--Renatone
-		      [133439848] = true,--Amelia Rat
+		      [129046388] = true,--Para
+		      [23776848] = true,--Amelia Rat
 			[219387852] = true,--Aurora
 			[23776848] = true,--Melisa
-		},
-		
-		GlobalBanList = {
-			[226703696] = true, --Wese: Impersonation / Stalking
-			[104427390] = true, --Lixie: Stalking
-			[238377175] = true, --Cropa-Senpai: CP
-			[194979294] = true, --Rocco Semental: CP
-			[115439685] = true, --Cosme Florencia: CP
-			[242242011] = true, -- Moon Man, Trolling all the groups
-			[115293868] = true, -- Young Trece: Sudo CP
-		}
+    		}
 	},
-	log_chat = -1001056443835,
+	log_chat = -1001064696517,
 	channel = '@werewolfdev',
 	help_group = 'https://telegram.me/werewolfsupport', --group link, not username!
 	languages = 'languages.lua',
@@ -61,13 +31,13 @@ return {
 		'service.lua',
 		'links.lua',
 		'warn.lua',
-		'mediasettings.lua',
+		'extra.lua',
 		'setlang.lua',
 		'floodmanager.lua',
+		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
 		'faq.lua',
-		'extra.lua',
 		--'test.lua'
 	},
 	available_languages = {
