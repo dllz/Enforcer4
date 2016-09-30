@@ -39,26 +39,25 @@ end
 local action = function(msg, blocks, ln)
 	print(2222)
 	if not msg.cb and msg.chat.type ~= 'private' then
-		
-		if not is_mod(msg) then return end
-		
-		if blocks[1] == 'media list' then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then 
+			if blocks[1] == 'media list' then
 			local media_sett = db:hgetall('chat:'..msg.chat.id..':media')
 			local text = lang[ln].mediasettings.settings_header
 			for k,v in pairs(media_sett) do
 				text = text..'`'..k..'`'..' = '..v..'\n'
 			end
 			api.sendReply(msg, text, true)
+			end
+			if blocks[1] == 'media' then
+				keyboard = doKeyboard_media(msg.chat.id)
+				local res = api.sendKeyboard(msg.from.id, lang[ln].all.media_first..'\n('..msg.chat.title:mEscape()..')', keyboard, true)
+				if res then
+					api.sendMessage(msg.chat.id, lang[ln].bonus.general_pm, true)
+				else
+					cross.sendStartMe(msg, ln)
+				end
+			end
 		end
-		if blocks[1] == 'media' then
-            keyboard = doKeyboard_media(msg.chat.id)
-            local res = api.sendKeyboard(msg.from.id, lang[ln].all.media_first..'\n('..msg.chat.title:mEscape()..')', keyboard, true)
-            if res then
-            	api.sendMessage(msg.chat.id, lang[ln].bonus.general_pm, true)
-            else
-            	cross.sendStartMe(msg, ln)
-            end
-	    end
 	end
 	
 	print(msg.cb )

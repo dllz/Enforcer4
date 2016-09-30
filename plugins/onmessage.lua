@@ -216,7 +216,7 @@ pre_process = function(msg, ln)
 		--print("by return")
 		local path = "./logs/MessageLog.txt"
 		file = io.open(path, "w")
-		local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..msg.chat.title
+		local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..clr.red..msg.chat.title..clr.white..msg.chat.id
 		file:write(logText)
 		file:close()
 	end
