@@ -132,6 +132,14 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'NuteNuteNutella! I am hungry.. Feed me, bella! (and feel free to call for me. You know the way, right.. kick and bans <3)')
 			return
 		end
+		if msg.added.id == 218056872 then
+			api.sendMessage(msg.chat.id, "Welcome, Godfather. Here's your Fedora, Tommy Gun, and ban offers nobody can refuse.")
+			return
+		end
+		if msg.added.id == 213947461 then
+			api.sendMessage(msg.chat.id, "Welcome, Godmother. *plays piano* Speak softly, miss, and carry this: your banpistol")
+			return
+		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
 			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
