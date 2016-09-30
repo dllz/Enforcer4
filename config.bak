@@ -1,30 +1,21 @@
 return {
-	bot_api_key = '',
+	bot_api_key = '218011713:AAEVN6YeNYdZogzchLA5TFDlF46-RoBl1b8',
 	version = '3.1', -- /aupdate for v3.1
 	testing_mode = false,
 	admin = {
-		owner = '',
+		owner = 125311351,
 		admins = {
-
-    		},
-		superAdmins = {
-
-		},
-		
-		wwGlobalAdmins = {
-
-		},
-		
-		GlobalBanList = {
-			[226703696] = true, --Wese: Impersonation / Stalking
-			[104427390] = true, --Lixie: Stalking
-			[238377175] = true, --Cropa-Senpai: CP
-			[194979294] = true, --Rocco Semental: CP
-			[115439685] = true, --Cosme Florencia: CP
-
-		}
+		      [95890871] = false,--Pierre CloneMMDDCCVVII
+		      [125311351] = true,--Daniel Blade Zero
+		      [114566255] = true,--Bella Nutella Pup
+		      [133748469] = false,--Renatone
+		      [129046388] = true,--Para
+		      [23776848] = true,--Amelia Rat
+			[219387852] = true,--Aurora
+			[23776848] = true,--Melisa
+    		}
 	},
-	log_chat = -1001056443835,
+	log_chat = -1001064696517,
 	channel = '@werewolfdev',
 	help_group = 'https://telegram.me/werewolfsupport', --group link, not username!
 	languages = 'languages.lua',

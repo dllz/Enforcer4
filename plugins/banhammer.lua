@@ -167,6 +167,22 @@ local action = function(msg, blocks, ln)
     			end
     			return
 	    	end
+			
+			if blocks[1] == 'kickid' then
+				local res, motivation = api.kickUser(msg.chat.id, blocks[2], ln)
+		    	if not res then
+		    		if not motivation then
+		    			motivation = lang[ln].banhammer.general_motivation
+						api.sendReply(msg, motivation, true)
+		    		else
+						api.sendReply(msg, 'Kick Failed, please manually unban')
+					end
+		    	else
+					db:hdel('chat:'..msg.chat.id..':userJoin', blocks[2])
+		    		cross.saveBan(blocks[2], 'kick')
+		    		api.sendMessage(msg.chat.id, 'User Kicked', true)
+		    	end
+			end
 		    
 		    --commands that need a target user
 		    
@@ -232,8 +248,10 @@ local action = function(msg, blocks, ln)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = lang[ln].banhammer.general_motivation
-		    		end
-		    		api.sendReply(msg, motivation, true)
+						api.sendReply(msg, motivation, true)
+		    		else
+						api.sendReply(msg, 'Kick Failed, please manually unban')
+					end
 		    	else
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 		    		cross.saveBan(user_id, 'kick')
@@ -330,7 +348,7 @@ local action = function(msg, blocks, ln)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
 					db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
-					api.sendReply(msg, msg.id..' is rekted', true)
+					api.sendReply(msg, forward..' is rekted', true)
 				else
 					local uesr = msg.reply.from.id
 					local hash = 'globalBan:'..uesr
@@ -339,7 +357,7 @@ local action = function(msg, blocks, ln)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
 					db:hset(hash, 'time', os.date('%d %B %Y, %X'))
-					api.sendReply(msg, msg.id..' is rekted', true)
+					api.sendReply(msg, user..' is rekted', true)
 				end
 			end
 		end
@@ -351,8 +369,10 @@ return {
 	cron = cron,
 	triggers = {
 		'^/(kickme)%s?',
+		'^/(kickid) (%d+)',
 		'^/(kick) (@[%w_]+)',
 		'^/(kick)',
+		'^/(kickid) (%d+)',
 		'^/(banlist)$',
 		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',

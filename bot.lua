@@ -51,7 +51,7 @@ bot_init = function(on_reload) -- The function run when the bot is started or re
 	math.randomseed(os.time())
 	math.random()
 
-	last_update = last_update or 0 -- Set loop variables: Update offset,
+	last_update = last_update or db:get('bot:last_update') -- Set loop variables: Update offset,
 	last_cron = last_cron or os.time() -- the time of the last cron job,
 	is_started = true -- whether the bot should be running or not.
 
@@ -139,7 +139,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 		return
 	end
 	
-	if msg.date < os.time() - 5 then return end -- Do not process old messages.
+	if msg.date < os.time() - 20 then return end -- Do not process old messages.
 	if not msg.text then msg.text = msg.caption or '' end
 	
 	msg.normal_group = false
@@ -338,10 +338,11 @@ bot_init() -- Actually start the script. Run the bot_init function.
 
 while is_started do -- Start a loop while the bot should be running.
 	local res = api.getUpdates(last_update+1) -- Get the latest updates!
-	if res then
+	if res and res.result  then
 		--vardump(res)
 		for i,msg in ipairs(res.result) do -- Go through every new message.
 			last_update = msg.update_id
+			db:set('bot:last_update', last_update)
 			current_m = current_m + 1
 			if msg.message  or msg.callback_query --[[or msg.edited_message]]then
 				--[[if msg.edited_message then

@@ -54,7 +54,7 @@ local function do_keybaord_credits()
     keyboard.inline_keyboard = {
     	{
     		{text = 'Channel', url = 'https://telegram.me/'..config.channel:gsub('@', '')},
-    		{text = 'GitHub', url = 'https://github.com/BladeZero/GroupButler'},
+    		{text = 'GitHub', url = 'https://github.com/dllz/EnforcerLua'},
     		{text = 'Get Support', url = 'https://telegram.me/werewolfsupport'},
 		},
 		{
@@ -80,6 +80,7 @@ local function do_keyboard_private()
             {text = 'Get Support', url = 'https://telegram.me/werewolfsupport'},
         },
         {
+			{text = "Credits", callback_data = '!info_button'},
             {text = "Done", callback_data = "close"}
         }
     }

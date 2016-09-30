@@ -69,32 +69,33 @@ local function action(msg, blocks, ln)
     local text, keyboard
     
     if not msg.cb then
-        if not is_mod(msg) then return end
-        if blocks[1]:match('%d%d?') then
-            if tonumber(blocks[1]) < 4 or tonumber(blocks[1]) > 25 then
-				api.sendReply(msg, make_text(lang[ln].floodmanager.number_invalid, blocks[1]), true)
+        if is_mod(msg) or config.admin.superAdmins[msg.from.id] then 
+			if blocks[1]:match('%d%d?') then
+				if tonumber(blocks[1]) < 4 or tonumber(blocks[1]) > 25 then
+					api.sendReply(msg, make_text(lang[ln].floodmanager.number_invalid, blocks[1]), true)
+				else
+					local new = tonumber(blocks[1])
+					local old = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or 5
+					if new == old then
+						api.sendReply(msg, make_text(lang[ln].floodmanager.not_changed, new), true)
+					else
+						db:hset('chat:'..msg.chat.id..':flood', 'MaxFlood', new)
+						api.sendReply(msg, make_text(lang[ln].floodmanager.changed_plug, old, new), true)
+					end
+				end
+				return
+			end
+			text = lang[ln].floodmanager.header
+			keyboard = do_keyboard_flood(chat_id, ln)
+			local res = api.sendKeyboard(msg.from.id, text, keyboard, true)
+			if not res then
+				cross.sendStartMe(msg, ln)
 			else
-	    	    local new = tonumber(blocks[1])
-	    	    local old = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or 5
-	    	    if new == old then
-	            	api.sendReply(msg, make_text(lang[ln].floodmanager.not_changed, new), true)
-	    	    else
-	            	db:hset('chat:'..msg.chat.id..':flood', 'MaxFlood', new)
-	            	api.sendReply(msg, make_text(lang[ln].floodmanager.changed_plug, old, new), true)
-	    	    end
-            end
-            return
-        end
-        text = lang[ln].floodmanager.header
-        keyboard = do_keyboard_flood(chat_id, ln)
-        local res = api.sendKeyboard(msg.from.id, text, keyboard, true)
-        if not res then
-            cross.sendStartMe(msg, ln)
-        else
-            api.sendReply(msg, lang[ln].floodmanager.sent, true)
-        end
-    else
-        if blocks[1] == 'alert' then
+				api.sendReply(msg, lang[ln].floodmanager.sent, true)
+			end
+		end
+	else
+		if blocks[1] == 'alert' then
             if blocks[2] == 'num' then
                 text = '⚖'..lang[ln].floodmanager.number_cb
             elseif blocks[2] == 'voice' then
@@ -137,7 +138,7 @@ local function action(msg, blocks, ln)
         keyboard = do_keyboard_flood(chat_id, ln)
         api.editMessageText(msg.chat.id, msg.message_id, lang[ln].floodmanager.header, keyboard, true)
         api.answerCallbackQuery(msg.cb_id, text)
-    end
+	end
 end
 
 return {
