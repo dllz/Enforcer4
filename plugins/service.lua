@@ -24,15 +24,7 @@ local function get_welcome(msg, ln)
 		api.sendDocumentId(msg.chat.id, file_id)
 		return false
 	elseif type == 'custom' then
-		local hasMedia = db:hget('chat:'..msg.chat.id..':welcome', 'hasmedia')
-		if hasMedia == 'true' then
-			local file = db:hget('chat:'..msg.chat.id..':welcome', 'media')
-			local text = gsub_custom_welcome(msg, content)
-			api.sendDocumentWithCapId(msg.chat.id, file, text)
-			return false
-		else 
-			return gsub_custom_welcome(msg, content)
-		end
+		return gsub_custom_welcome(msg, content)
 	elseif type == 'composed' then
 		if not(content == 'no') then
 			local abt = cross.getAbout(msg.chat.id, ln)
@@ -81,8 +73,8 @@ local action = function(msg, blocks, ln)
 			api.leaveChat(msg.chat.id)
 			return
 		end
-		if is_blocked_global(msg.adder.id) or is_blocked_global(msg.chat.id) then
-			api.sendMessage(msg.chat.id, '_You are blocked from using this bot_', true)
+		if is_blocked_global(msg.adder.id) then
+			api.sendMessage(msg.chat.id, '_You ('..msg.adder.first_name:mEscape()..', '..msg.adder.id..') are in the blocked list_', true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
@@ -119,9 +111,9 @@ local action = function(msg, blocks, ln)
 			if username:find('bot', -3) then return end
 		end
 		
-		if msg.added.id == 95890871 then
-			api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
-			return
+		if msg.added.id == "95890871" then
+				api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
+				return
 		end
 		if msg.added.id == 125311351 then
 			api.sendMessage(msg.chat.id, 'My mechanic is here!')
@@ -140,16 +132,16 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'NuteNuteNutella! I am hungry.. Feed me, bella! (and feel free to call for me. You know the way, right.. kick and bans <3)')
 			return
 		end
-		if msg.added.id == 263451571 then
-			api.sendMessage(msg.chat.id, 'The Node Queen is here! This Vixen is ready to slay.')
+		if msg.added.id == 218056872 then
+			api.sendMessage(msg.chat.id, "Welcome, Godfather. Here's your Fedora, Tommy Gun, and ban offers nobody can refuse.")
 			return
 		end
-		if msg.added.id == 81772130 then
-			api.sendMessage(msg.chat.id, 'Your a bad admin. Be a good admin - Budi')
+		if msg.added.id == 213947461 then
+			api.sendMessage(msg.chat.id, "Welcome, Godmother. *plays piano* Speak softly, miss, and carry this: your banpistol")
 			return
 		end
-		if msg.added.id == 221962247 then
-			api.sendMessage(msg.chat.id, 'Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.')
+		if msg.added.id == 159289055 then
+			api.sendMessage(msg.chat.id, "Shit, I really don't know...")
 			return
 		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
