@@ -6,7 +6,10 @@ local action = function(msg, blocks, ln)
     if blocks[1] == 'rules' then
         local out = cross.getRules(msg.chat.id, ln)
     	if is_locked(msg, 'Rules') and not is_mod(msg) then
-    		api.sendMessage(msg.from.id, out, true)
+			local res, code = api.sendMessage(msg.from.id, out, true)
+			if	code == 403 then
+				api.sendReply(msg, "Please start @wwbutlerbot and try this command again")
+			end
     	else
         	api.sendReply(msg, out, true)
         end
