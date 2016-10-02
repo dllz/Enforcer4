@@ -126,7 +126,7 @@ local action = function(msg, blocks, ln)
         if not send_reply then
         	local res, code = api.sendMessage(msg.from.id, out, true)
 			if code == 403 then
-				api.sendReply(msg, "Please start @wwbutlerbot and try this command again")
+				api.sendReply(msg, "Please start @werewolfbutlerbot and try this command again")
 			end
         else
             api.sendReply(msg, out, true)
