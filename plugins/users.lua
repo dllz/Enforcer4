@@ -124,7 +124,10 @@ local action = function(msg, blocks, ln)
         local creator, adminlist = cross.getModlist(msg.chat.id, no_usernames)
         out = make_text(lang[ln].mod.modlist, creator, adminlist)
         if not send_reply then
-        	api.sendMessage(msg.from.id, out, true)
+        	local res, code = api.sendMessage(msg.from.id, out, true)
+			if code == 403 then
+				api.sendReply(msg, "Please start @wwbutlerbot and try this command again")
+			end
         else
             api.sendReply(msg, out, true)
         end
