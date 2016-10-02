@@ -68,6 +68,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 	end
 	if count403 >= 1 then
 		api.sendReply(msg, "Please remind some of your admins to start @werewolfbutlerbot so that they can receive reports")
+		print("Notified")
 	end
 
 	--print(result[1], result[2], result[3], result[4])
