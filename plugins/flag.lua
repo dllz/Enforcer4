@@ -270,7 +270,7 @@ local action = function(msg, blocks, ln)
 					local solvedBy = db:hget(hash14, 'solvedBy')
 					api.sendReply(msg, 'This message was solved at '..solvedTime..' by '..solvedBy)
 				else
-					api.sendReply(msg, 'Please reply to a flagged message (contains @admin).')
+					api.sendReply(msg, 'Please send a valid Report ID')
 				end
 			else
 				api.sendReply(msg, 'Please reply to a flagged message (contains @admin).')
