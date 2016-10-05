@@ -163,7 +163,7 @@ local action = function(msg, blocks, ln)
 	end
 		
 	if blocks[1] == 'solved' then
-		print(blocks[2])
+		print("Second block"..blocks[2])
 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				local msg_id = msg.reply.message_id
