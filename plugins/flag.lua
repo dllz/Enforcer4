@@ -130,7 +130,6 @@ local action = function(msg, blocks, ln)
             local is_by_reply = false
             if msg.reply then
                 is_by_reply = true
-                msg_id = msg.reply.message_id
             end
             local reporter = msg.from.first_name
             if msg.from.username then reporter = reporter..' (@'..msg.from.username..')' end
@@ -163,7 +162,7 @@ local action = function(msg, blocks, ln)
 	end
 		
 	if blocks[1] == 'solved' then
-		print("Second block"..blocks[2])
+		--print("Second block"..blocks[2])
 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				local msg_id = msg.reply.message_id
@@ -220,7 +219,7 @@ local action = function(msg, blocks, ln)
 					api.sendReply(msg, 'Please reply to a flagged message (contains @admin).')
 				end
 			elseif blocks[2] then
-				print("in block")
+				--print("in block")
 				local msg_id = blocks[2]
 				print("Mesesage ID:", msg_id)
 				hash12 = 'flagged:'..msg.chat.id..':'..msg_id
