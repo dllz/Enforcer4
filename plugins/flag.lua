@@ -162,7 +162,8 @@ local action = function(msg, blocks, ln)
         end
 	end
 		
-	if blocks[1] == 'solved' then 
+	if blocks[1] == 'solved' then
+		print("Second block"..blocks[2])
 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				local msg_id = msg.reply.message_id
@@ -218,6 +219,61 @@ local action = function(msg, blocks, ln)
 				else
 					api.sendReply(msg, 'Please reply to a flagged message (contains @admin).')
 				end
+			elseif blocks[2] then
+				print("in block")
+				local msg_id = blocks[2]
+				print("Mesesage ID:", msg_id)
+				hash12 = 'flagged:'..msg.chat.id..':'..msg_id
+				isSolved1 = db:hget(hash12, 'Solved')
+				--print("12213213")
+				hash13 = 'flagged:'..msg.chat.id..':'..msg_id+1
+				isSolved2 = db:hget(hash13, 'Solved')
+				if isSolved1 then
+					hash14 = 'flagged:'..msg.chat.id..':'..msg_id
+				elseif isSolved2 then
+					hash14 = 'flagged:'..msg.chat.id..':'..msg_id+1
+				else
+					api.sendReply(msg, 'Report not found')
+					print("1, ", isSolved1)
+					print("2, ", isSolved2)
+					return
+				end
+
+				alreadyReported = db:hget(hash14, 'Solved')
+				--print("Reprorteorijt", alreadyReported)
+				if alreadyReported == '0' then
+					local solvedBy = msg.from.first_name
+					if msg.from.username then solvedBy = solvedBy..' (@'..msg.from.username..')' end
+					local solvedAt = os.date('!%c (UCT)')
+
+					db:hset(hash14, 'SolvedAt', solvedAt)
+					db:hset(hash14, 'solvedBy', solvedBy)
+					db:hset(hash14, 'Solved', 1)
+					counter = db:hget(hash14, '#Admin')
+					--print("counter", counter)
+					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')'
+					for i=1, counter, 1 do
+						local id = db:hget(hash14, 'adminID'..i)
+						--print("id", id)
+						local msgID = db:hget(hash14, 'Message'..i)
+						--print("msgid", msgID)
+						if id ~= nil then
+							--print("id", id)
+							if msgID ~= nil then
+								--print("msgid", msgID)
+								api.editMessageText(id, msgID, text..'\nReport ID: '..msg_id, false, false)
+							end
+						end
+
+					end
+					api.sendReply(msg, 'Marked as solved')
+				elseif alreadyReported == '1' then
+					local solvedTime = db:hget(hash14, 'SolvedAt')
+					local solvedBy = db:hget(hash14, 'solvedBy')
+					api.sendReply(msg, 'This message was solved at '..solvedTime..' by '..solvedBy)
+				else
+					api.sendReply(msg, 'Please send a valid Report ID')
+				end
 			else
 				api.sendReply(msg, 'Please reply to a flagged message (contains @admin).')
 			end
@@ -242,6 +298,7 @@ return {
 	    '^@(admin) (.*)$',
 	    '^/(report) (on)$',
 	    '^/(report) (off)$',
+		'^/(solved) (%d+)$',
 		'^/(solved)',
 		'^/(msgid)',
     }
