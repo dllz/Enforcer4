@@ -65,10 +65,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 			--print("Entry count ", result[i])
 		elseif code == 403 then
 			count403 = count403 + 1
-            if db:hget("bot:ids", mods[i]) == nil then
                 admin = admin..db:hget("bot:ids",mods[i]).." \n"
-            end
-
 		end
 	end
 	if count403 >= 1 then
