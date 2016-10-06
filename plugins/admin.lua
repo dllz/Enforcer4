@@ -147,9 +147,9 @@ local action = function(msg, blocks, ln)
 
     if blocks[1] == 'whois' then
         if blocks[2] then
-           local hash = 'bot:ids:'..blocks[2]
-            if db:hget(hash) then
-                local user = db:hget(hash)
+           local hash = 'bot:ids'
+            if db:hget(hash, blocks[2]) then
+                local user = db:hget(hash, blocks[2])
                 api.sendMessage(msg.chat.id, 'This is the user name i have associated with that ID '..user)
             else
                 api.sendMessage(msg.chat.id, 'ID not found')
