@@ -289,7 +289,9 @@ local action = function(msg, blocks, ln)
 	    end
 	    local usernames = db:hkeys('bot:usernames')
 	    text = text..'- *usernames cache*: `'..#usernames..'`\n'
-	    
+		local ids = db:hkeys('bot:ids')
+		text = text..'- *User ID cache*:  `'..#ids..'` \n'
+
 	    --db info
 	    text = text.. '\n*DB stats*\n'
 		local dbinfo = db:info()
