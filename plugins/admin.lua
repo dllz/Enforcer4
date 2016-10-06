@@ -148,10 +148,15 @@ local action = function(msg, blocks, ln)
     if blocks[1] == 'whois' then
         if blocks[2] then
            local hash = 'bot:ids:'..blocks[2]
-            local user = db:hget(hash)
-            api.sendMessage(msg.chat.id, 'This is the user name i have associated with that ID '..user)
+            if db:hget(hash) then
+                local user = db:hget(hash)
+                api.sendMessage(msg.chat.id, 'This is the user name i have associated with that ID '..user)
+            else
+                api.sendMessage(msg.chat.id, 'ID not found')
+            end
         else
-        api.sendMessage(msg.chat.id, 'Please add an ID')
+            api.sendMessage(msg.chat.id, 'Please add an ID')
+        end
     end
 	
 	if blocks[1] == 'dbdump' then 
