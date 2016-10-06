@@ -47,6 +47,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 	adminID = {}
 	--print("Sending mods"..#mods)
 	local count403 = 0
+    local admins = ""
     for i=1,#mods do
 		--print('1001'..i)
         api.forwardMessage(mods[i], chat, msg_id)
@@ -64,11 +65,15 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 			--print("Entry count ", result[i])
 		elseif code == 403 then
 			count403 = count403 + 1
+            if db:hget("bot:ids:"..mods[i]) then
+                admin = admin.."\n"..db:hget("bot:ids:"..mods[i]))
+            end
+
 		end
 	end
 	if count403 >= 1 then
 		api.sendReply(msg, "Please remind some of your admins to start @werewolfbutlerbot so that they can receive reports")
-		print("Notified")
+		print("Notified "..admin)
 	end
 
 	--print(result[1], result[2], result[3], result[4])
