@@ -47,7 +47,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 	adminID = {}
 	--print("Sending mods"..#mods)
 	local count403 = 0
-    local admins = ""
+    local admins = " "
     for i=1,#mods do
 		--print('1001'..i)
         api.forwardMessage(mods[i], chat, msg_id)
