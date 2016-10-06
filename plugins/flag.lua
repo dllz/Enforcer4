@@ -47,7 +47,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 	adminID = {}
 	--print("Sending mods"..#mods)
 	local count403 = 0
-    local admin = " "
+    local admin = "some of your admins"
     for i=1,#mods do
 		--print('1001'..i)
         api.forwardMessage(mods[i], chat, msg_id)
@@ -74,7 +74,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		end
 	end
 	if count403 >= 1 then
-		api.sendReply(msg, "Please tell"..admin.." to start @werewolfbutlerbot so that they can receive reports")
+		api.sendReply(msg, "Please tell "..admin.." to start @werewolfbutlerbot so that they can receive reports")
 		print("Notified "..admin)
 	end
 
