@@ -15,6 +15,7 @@ local triggers2 = {
 	'^/a(log)$',
 	'^/a(admin)$',
 	'^/a(block) (%d+)$',
+    '^/a(whois) (%d+)$',
 	'^/a(block) (-%d+)$',
 	'^/a(block)$',
 	'^/a(unblock) (%d+)$',
@@ -143,6 +144,20 @@ local action = function(msg, blocks, ln)
 	end
 	
 	if not blocks or not next(blocks) then return true end --continue to match plugins
+
+    if blocks[1] == 'whois' then
+        if blocks[2] then
+           local hash = 'bot:ids:'..blocks[2]
+            if db:hget(hash) then
+                local user = db:hget(hash)
+                api.sendMessage(msg.chat.id, 'This is the user name i have associated with that ID '..user)
+            else
+                api.sendMessage(msg.chat.id, 'ID not found')
+            end
+        else
+            api.sendMessage(msg.chat.id, 'Please add an ID')
+        end
+    end
 	
 	if blocks[1] == 'dbdump' then 
 		print(Hello)
