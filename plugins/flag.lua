@@ -66,17 +66,17 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		elseif code == 403 then
 			count403 = count403 + 1
             local temp = db:hget("bot:ids", mods[i])
-            print(temp)
+            print("DB Result" + temp)
             if temp ~= nil then
-                admin = admin..db:hget("bot:ids",mods[i]).." \n"
+                admin = admin..db:hget("bot:ids",mods[i]) + " \n"
                 print(admin)
             end
 
 		end
 	end
 	if count403 >= 1 then
-		api.sendReply(msg, "Please tell"..admin.." to start @werewolfbutlerbot so that they can receive reports")
-		print("Notified "..admin)
+		api.sendReply(msg, "Please tell" + admin + " to start @werewolfbutlerbot so that they can receive reports")
+		print("Notified " + admin)
 	end
 
 	--print(result[1], result[2], result[3], result[4])
