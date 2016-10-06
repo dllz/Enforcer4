@@ -198,13 +198,13 @@ local function kickUser(chat_id, user_id, ln)-- no_msg: don't send the error mes
 		local check = api.getChatMember(chat_id, user_id)
 		local status = check.result.status -- check if user is banned 
 		--print('status has been check')
-		while status == 'member' and count < 10 do
+		while status == 'member' and count < 8 do
 			check = api.getChatMember(chat_id, user_id)
 			status = check.result.status
 			count = count + 1
 		end
 		count = 0
-		while status ~= 'left' and count < 10 do
+		while status ~= 'left' and count < 8 do
 			api.unbanChatMember(chat_id, user_id)
 			check = api.getChatMember(chat_id, user_id)
 			status = check.result.status
