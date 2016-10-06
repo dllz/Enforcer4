@@ -214,11 +214,11 @@ pre_process = function(msg, ln)
 			end
 		end
 		--print("by return")
-		local path = "./logs/MessageLog.txt"
-		file = io.open(path, "w")
-		local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..clr.red..msg.chat.title..clr.white..msg.chat.id
-		file:write(logText)
-		file:close()
+		--local path = "./logs/MessageLog.txt"
+		--file = io.open(path, "w")
+		--local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..clr.red..msg.chat.title..clr.white..msg.chat.id
+		--:write(logText)
+		--file:close()
 	end
     if msg.chat.type == "private" and msg.cb and msg.text == "###cb:close" then
         api.editMessageText(msg.chat.id, msg.message_id, "Done.")
