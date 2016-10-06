@@ -250,7 +250,7 @@ local action = function(msg, blocks, ln)
 		    			motivation = lang[ln].banhammer.general_motivation
 						api.sendReply(msg, motivation, true)
 		    		else
-						api.sendReply(msg, 'Kick Failed, please manually unban')
+						api.sendReply(msg, 'Kick Failed, please manually unban '..get_nick(msg, false, true):mEscape())
 					end
 		    	else
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
