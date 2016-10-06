@@ -68,7 +68,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
             local temp = db:hget("bot:ids", mods[i])
             if temp ~= nil then
                 admin = admin..db:hget("bot:ids",mods[i]).." \n"
-                print(admin)
+               -- print(admin)
             end
 
 		end
