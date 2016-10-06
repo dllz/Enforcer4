@@ -66,7 +66,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		elseif code == 403 then
 			count403 = count403 + 1
             if db:hget("bot:ids:"..mods[i]) then
-                admin = admin.."\n"..db:hget("bot:ids:"..mods[i]))
+                admin = admin.."\n"..db:hget("bot:ids:"..mods[i])
             end
 
 		end
