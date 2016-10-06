@@ -102,10 +102,12 @@ local function collect_stats(msg)
 	--for resolve username
 	if msg.from and msg.from.username then
 		db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
+		db:hset('bot:ids', msg.from.id, '@'..msg.from.username)
 		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.from.username:lower(), msg.from.id)
 	end
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
+		db:hset('bot:ids', msg.forward_from.id, '@'..msg.forward_from.username)
 		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 	end
 	
