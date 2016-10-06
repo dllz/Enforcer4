@@ -41,7 +41,7 @@ local function is_report_blocked(msg)
     return db:sismember(hash, msg.from.id)
 end
 
-local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg)
+local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg, reportid)
 	counter = 0
 	result = {}
 	adminID = {}
@@ -54,7 +54,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		--print('101'..i)
 		local temp
 		--print("MOD ID:"..mods[i])
-		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..msg_id)
+		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid)
 		--print("CODE: ", code)
 		--print("DATADUMP:", dump(temp))
 		if temp ~= false and code == nil then 
@@ -132,14 +132,16 @@ local action = function(msg, blocks, ln)
                 api.sendReply(msg, lang[ln].bonus.adminlist_admin_required, true)
             end
             local msg_id = msg.message_id
+            local repID = msg.message_id
             local is_by_reply = false
             if msg.reply then
                 is_by_reply = true
+                msg_id = msg.reply.message_id
             end
             local reporter = msg.from.first_name
             if msg.from.username then reporter = reporter..' (@'..msg.from.username..')' end
-            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg)
-            api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..msg_id)
+            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID)
+            api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
         end
     end
     if blocks[1] == 'report' then
