@@ -120,7 +120,7 @@ local action = function(msg, blocks, ln)
         	elseif hasMedia ~= nil then
 				api.sendLog(hasMedia)
 				local res, code = api.sendDocumentWithCapId(msg.from.id, hasMedia, text, msg_to_reply)
-				api.sendLog(res..'\n'..code)
+				api.sendLog(code)
 			else
         		api.sendMessage(msg.chat.id, text, true, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
         	end
