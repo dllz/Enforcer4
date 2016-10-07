@@ -67,7 +67,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 			count403 = count403 + 1
             local temp = db:hget("bot:ids", mods[i])
             if temp ~= nil then
-                admin = admin..db:hget("bot:ids",mods[i]).." \n"
+                admin = admin..db:hget("bot:ids",mods[i]).." "
                -- print(admin)
             end
 
