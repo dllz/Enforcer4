@@ -91,6 +91,7 @@ local action = function(msg, blocks, ln)
 		if not text then return end
         local file_id = text:match('^###.+###:(.*)')
 		local hasMedia = db:hget(hash..':'..text, 'mediaid')
+		api.sendLog(hasMedia)
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
         if is_locked(msg, 'Extra') and not is_mod(msg) then --send it in private
         	if not file_id or not hasMedia then
@@ -117,7 +118,7 @@ local action = function(msg, blocks, ln)
         		else
         			api.sendDocumentId(msg.chat.id, file_id, msg_to_reply)
         		end
-        	elseif hasMedia then
+        	elseif hasMedia ~= nil then
 				api.sendDocumentWithCapId(msg.from.id, hasMedia, text, msg_to_reply)
 			else
         		api.sendMessage(msg.chat.id, text, true, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
