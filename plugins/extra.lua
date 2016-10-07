@@ -21,6 +21,27 @@ local action = function(msg, blocks, ln)
 	    		db:hset('chat:'..msg.chat.id..':extra', blocks[2], to_save)
 	    		api.sendReply(msg, 'This media has been saved as response to '..blocks[2])
 	    	end
+		elseif msg.reply and blocks[3] then
+			local type = get_media_type(msg.reply)
+			if not type == 'sticker' or not type == 'gif' then
+				return
+			else
+				local to_save = msg.reply.document.file_id
+				local res, code = api.sendReply(msg, blocks[3], true)
+				if not res then
+					if code == 118 then
+						api.sendMessage(msg.chat.id, lang[ln].bonus.too_long)
+					else
+						api.sendMessage(msg.chat.id, lang[ln].breaks_markdown, true)
+					end
+				else
+					db:hset('chat:'..msg.chat.id..':extra:'..blocks[2], 'mediaid', to_save)
+					db:hset('chat:'..msg.chat.id..':extra', blocks[2], blocks[3])
+					local msg_id = res.result.message_id
+					api.editMessageText(msg.chat.id, msg_id, make_text(lang[ln].extra.setted, blocks[2]), false)
+				end
+
+			end
 		else
 	    	local hash = 'chat:'..msg.chat.id..':extra'
 	    	
@@ -67,16 +88,19 @@ local action = function(msg, blocks, ln)
     else
     	local hash = 'chat:'..msg.chat.id..':extra'
     	local text = db:hget(hash, blocks[1])
-        if not text then return end
+		if not text then return end
         local file_id = text:match('^###.+###:(.*)')
+		local hasMedia = db:hget(hash..':'..text)
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
         if is_locked(msg, 'Extra') and not is_mod(msg) then --send it in private
-        	if not file_id then
+        	if not file_id or not hasMedia then
             	api.sendMessage(msg.from.id, text, true)
             else
             	if special_method then
             		api.sendMediaId(msg.from.id, file_id, special_method) --photo, voices, video need their method to be sent by file_id
-            	else
+            	elseif hasMedia then
+					api.sendDocumentWithCapId(msg.from.id, hasMedia, text)
+				else
             		api.sendDocumentId(msg.from.id, file_id)
             	end
             end
@@ -93,7 +117,9 @@ local action = function(msg, blocks, ln)
         		else
         			api.sendDocumentId(msg.chat.id, file_id, msg_to_reply)
         		end
-        	else
+        	elseif hasMedia then
+				api.sendDocumentWithCapId(msg.from.id, hasMedia, text, msg_to_reply)
+			else
         		api.sendMessage(msg.chat.id, text, true, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
         	end
         end
