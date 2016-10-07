@@ -23,7 +23,7 @@ local action = function(msg, blocks, ln)
 	    	end
 		elseif msg.reply and blocks[3] then
 			local type = get_media_type(msg.reply)
-			if not type == 'sticker' or not type == 'gif' then
+			if type ~= 'gif' then
 				return
 			else
 				local to_save = msg.reply.document.file_id
