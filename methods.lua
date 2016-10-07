@@ -29,17 +29,21 @@ local function sendRequest(url)
 	end
 	
 	local tab = JSON.decode(dat)
-	if tab.ok and not(tab.result) then 
-		print("Result false")
-		print(dump(tab))
-		api.sendLog('#UpdateFailed\n'..dump(tab))
-		dat, code = HTTPS.request(url)
-	
-		if not dat then
-			return false, code 
+	if tab ~= nil then
+		if tab.ok and not(tab.result) then
+			print("Result false")
+			print(dump(tab))
+			api.sendLog('#UpdateFailed\n'..dump(tab))
+			dat, code = HTTPS.request(url)
+
+			if not dat then
+				return false, code
+			end
+
+			tab = JSON.decode(dat)
 		end
-		
-		tab = JSON.decode(dat)
+	else
+		api.sendLog('#UpdateFailed\n'..dump(tab))
 	end
 	if code ~= 200 then
 		print(clr.red..code, tab.description..clr.reset)
