@@ -205,8 +205,8 @@ local action = function(msg, blocks, ln)
 					db:hset(hash14, 'solvedBy', solvedBy)
 					db:hset(hash14, 'Solved', 1)
 					counter = db:hget(hash14, '#Admin')
-					reporter = db:hget(hash14, 'Reporter')
-					repID = db:hget(has14, 'repID')
+					reporter = " "
+					repID = " "
 					--print("counter", counter)
 					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
 					for i=1, counter, 1 do
