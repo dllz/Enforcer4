@@ -363,7 +363,7 @@ local action = function(msg, blocks, ln)
 		end
 		-- temporary!
 		if blocks[1] == 'unrekt' then
-			if config.admin.superAdmins[msg.from.id] then
+			if config.admin.admins[msg.from.id] then
 				 
 				if msg.reply.forward_from ~= nil then 
 					local forward = msg.reply.forward_from.id 
