@@ -107,7 +107,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		db:hset(hash10, 'Created', timer)
 		db:hset(hash10, '#Admin', counter)
 		db:hset(hash10, 'Reporter', reporter)
-		sb:hset(hash10, 'repID', reportid)
+		db:hset(hash10, 'repID', reportid)
 	end
 end
 
