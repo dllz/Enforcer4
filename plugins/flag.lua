@@ -98,7 +98,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 				--print(id)
 				if sentMsgID ~= nil then
 					--print(sentMsgID)
-					db:hset(hash10, 'Message'..o, sentMsgID)
+						db:hset(hash10, 'Message'..o, sentMsgID)
 					db:hset(hash10, 'adminID'..o, id)
 				end 
 			end 
@@ -205,8 +205,8 @@ local action = function(msg, blocks, ln)
 					db:hset(hash14, 'solvedBy', solvedBy)
 					db:hset(hash14, 'Solved', 1)
 					counter = db:hget(hash14, '#Admin')
-					reporter = " "
-					repID = " "
+					reporter = db:hget(hash14, 'Reporter')
+					repID = db:hget(hash14, 'repID')
 					--print("counter", counter)
 					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
 					for i=1, counter, 1 do
@@ -263,7 +263,7 @@ local action = function(msg, blocks, ln)
 					db:hset(hash14, 'Solved', 1)
 					counter = db:hget(hash14, '#Admin')
 					reporter = db:hget(hash14, 'Reporter')
-					repID = db:hget(has14, 'repID')
+					repID = db:hget(hash14, 'repID')
 					--print("counter", counter)
 					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
 					for i=1, counter, 1 do
