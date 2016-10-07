@@ -91,7 +91,7 @@ local action = function(msg, blocks, ln)
 		if not text then return end
         local file_id = text:match('^###.+###:(.*)')
 		local hasMedia = db:hget(hash..':'..text, 'mediaid')
-		api.sendLog(hasMedia)
+		api.sendLog('hasMedia'..hasMedia)
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
         if is_locked(msg, 'Extra') and not is_mod(msg) then --send it in private
         	if not file_id or not hasMedia then
