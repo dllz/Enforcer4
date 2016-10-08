@@ -67,7 +67,7 @@ local function getBanList(chat_id, ln)
         local i = 1
         for banned_id,info in pairs(banned_users) do
             text = text..'*'..i..'* - '..info.nick:mEscape()
-            if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
+            if info.why then text = text..'\n*ā�¦* '..info.why:mEscape() end
             text = text..'\n'
             i = i + 1
         end
@@ -250,7 +250,7 @@ local action = function(msg, blocks, ln)
 		    			motivation = lang[ln].banhammer.general_motivation
 						api.sendReply(msg, motivation, true)
 		    		else
-						api.sendReply(msg, 'Kick Failed, please manually unban '..get_nick(msg, false, true):mEscape())
+						api.sendReply(msg, 'Kick Failed, please manually unban '..get_nick(msg, false, false):mEscape())
 					end
 		    	else
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
