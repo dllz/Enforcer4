@@ -67,7 +67,7 @@ local function getBanList(chat_id, ln)
         local i = 1
         for banned_id,info in pairs(banned_users) do
             text = text..'*'..i..'* - '..info.nick:mEscape()
-            if info.why then text = text..'\n*ā�¦* '..info.why:mEscape() end
+            if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
             text = text..'\n'
             i = i + 1
         end
