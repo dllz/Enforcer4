@@ -183,7 +183,48 @@ local action = function(msg, blocks, ln)
 		    		api.sendMessage(msg.chat.id, 'User Kicked', true)
 		    	end
 			end
+		  
+		  if blocks[1] == 'banid' then
+		    local is_normal_group = (msg.chat.type == 'group')
+		    local chat_id = msg.chat.id
+		    local user_id = blocks[2]
 		    
+		    --after this line, I kinda copied from ban x"D
+		    local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
+          if not res then
+            if not motivation then
+              motivation = lang[ln].banhammer.general_motivation
+            end
+            api.sendReply(msg, motivation, true)
+          else
+          local is_already_tempbanned = db:sismember('chat:'..chat_id..':tempbanned', user_id)
+          if is_already_tempbanned then 
+            print('Is already tempbanned')
+            local all = db:hgetall('tempbanned')
+            if next(all) then 
+              for unban_time,info in pairs(all) do
+                --print(chat_id..':'..user_id..' '..info)
+                if string.match(chat_id..':'..user_id, info) then 
+                  db:hdel('tempbanned', unban_time)
+                  --print('TimeRemoved '..unban_time)
+                end
+              end
+            end
+            db:srem('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
+            --print('Removed from db '..'chat:'..chat_id..':tempbanned '..user_id)
+          end
+            --save the ban
+            cross.saveBan(user_id, 'ban')
+            --add to banlist
+            --local nick = blocks[2] --banned user
+            local why = msg.text:gsub('^/ban %d+%s?', '')
+          --id = getId(msg)
+            cross.addBanList(msg.chat.id, user_id, user_id, why)
+            db:hdel('chat:'..msg.chat.id..':userJoin', user_id)
+            api.sendKeyboard(msg.chat.id, lang[ln].banhammer.banned:build_text(get_nick(msg, false, true):mEscape(), user_id:mEscape()), {inline_keyboard = {{{text = 'Unban', callback_data = 'unban:'..user_id}}}}, true)
+          end
+		  end
+		  
 		    --commands that need a target user
 		    
 		    if not msg.reply_to_message and not blocks[2] and not msg.cb then
@@ -403,6 +444,7 @@ return {
 		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
 		'^/(ban)',
+		'^/(banid) (%d+)',
 		'^/(tempban) (%d+)',
 		'^/(unban) (@[%w_]+)',
 		'^/(unban)',
