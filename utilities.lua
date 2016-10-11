@@ -883,7 +883,7 @@ local function extGet(hash, id, key)
         return false, 'hash does not exists'
     else
         if key then
-            return db:hegt(hahs..':'..id, key)
+            return db:hget(hash..':'..id, key)
         else
             if id then
                 local hgetall_res = db:hgetall(hash..':'..id)
