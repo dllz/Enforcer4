@@ -66,6 +66,13 @@ local function getBanList(chat_id, ln)
     else
         local i = 1
         for banned_id,info in pairs(banned_users) do
+			if info.nick == nil then
+				if banned_id ~= nil then
+					info.nick = tostring(banned_id)
+				else
+					info.nick = "anon"
+				end
+			end
             text = text..'*'..i..'* - '..info.nick:mEscape()
             if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
             text = text..'\n'
