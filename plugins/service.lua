@@ -172,6 +172,14 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, "Someone has a firestone? Cos Ponyta should evolve")
 			return
 		end
+		if msg.added.id == 106665913 then
+			api.sendMessage(msg.chat.id, "This is a known bug. No need to report.")
+			return
+		end
+		if msg.added.id == 96487504 then
+			api.sendMessage(msg.chat.id, "IT'S DIPPY!!!!. Oh wait no...:((")
+			return
+		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
 			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
