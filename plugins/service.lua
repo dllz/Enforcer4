@@ -168,6 +168,10 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, "Sheryl is here... I swear I will get her a kick immunity.")
 			return
 		end
+		if msg.added.id == 36702373 then
+			api.sendMessage(msg.chat.id, "Someone has a firestone? Cos Ponyta should evolve")
+			return
+		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
 			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
@@ -193,10 +197,11 @@ local action = function(msg, blocks, ln)
 	
 	if blocks[1] == 'removed' then
 		if msg.remover and msg.removed then
-			--CUSTOM LEAVE MSGS HERE
-			if msg.removed.id == 81772130 then
-				api.sendMessage(msg.chat.id, "Yayy he is gone, although tbh I will miss him. RIP @benthecat");
-			end
+			--First commandment of Daniel: 
+			--Thou shalt not add custom leave messages
+			--if msg.removed.id == 81772130 then
+			--	api.sendMessage(msg.chat.id, "Yayy he is gone, although tbh I will miss him. RIP @benthecat");
+			--end
 			
 			if msg.remover.id ~= msg.removed.id and msg.remover.id ~= bot.id then
 				local action
