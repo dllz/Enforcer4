@@ -193,6 +193,11 @@ local action = function(msg, blocks, ln)
 	
 	if blocks[1] == 'removed' then
 		if msg.remover and msg.removed then
+			--CUSTOM LEAVE MSGS HERE
+			if msg.removed.id == 81772130 then
+				api.sendMessage(msg.chat.id, "Yayy he is gone, although tbh I will miss him. RIP @benthecat");
+			end
+			
 			if msg.remover.id ~= msg.removed.id and msg.remover.id ~= bot.id then
 				local action
 				if msg.chat.type == 'supergroup' then
