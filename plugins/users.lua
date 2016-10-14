@@ -106,7 +106,22 @@ local function get_userinfo(user_id, chat_id, ln)
 end
 
 local action = function(msg, blocks, ln)
-    if blocks[1] == 'adminlist' then
+    if blocks[1] == 's' then
+		if msg.chat.type == 'private' then return end
+		if msg.reply then
+			local messageid = msg.reply.message_id
+			local saveTo = msg.from.id
+			local chat = msg.chat.id
+			local res, code = api.forwardMessage(saveTo, chat, messageid)
+			if code == 403 then
+				api.sendReply(msg, "Please start @werewolfbutlerbot.")
+			else
+				api.sendReply(msg, 'Message saved')
+			end
+		else
+			api.sendReply(msg, "Please reply to a message to save it")
+		end
+	elseif blocks[1] == 'adminlist' then
     	if msg.chat.type == 'private' then return end
     	local no_usernames
     	local send_reply = true
@@ -476,6 +491,7 @@ return {
         '^/(user) (@[%w_]+)$',
 		'^/(user) (%d+)$',
 		'^/(ping)$',
+		'^/(s)$',
 		
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
