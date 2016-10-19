@@ -454,6 +454,8 @@ local action = function(msg, blocks, ln)
 		local res, code = api.sendMessage(user_id, text, true)
 		if code == 403 then
 			api.sendReply(msg, "Please start @werewolfbutlerbot and try again.")
+		else
+			api.sendReply(msg, "Sent you a PM")
 		end
 		
 	elseif blocks[1] == 'banuser' then
