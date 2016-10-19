@@ -444,6 +444,15 @@ local action = function(msg, blocks, ln)
 		else
 			api.sendKeyboard(msg.chat.id, text, keyboard, true)
 		end
+	elseif blocks[1] == 'me' then
+		if msg.chat.type == 'private' then return end
+		
+		local user_id = msg.from.id
+		
+		local text = get_userinfo(user_id, msg.chat.id, ln)
+		
+		api.sendMessage(user_id, text, true)
+		
 	elseif blocks[1] == 'banuser' then
 		if not is_mod(msg) then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
@@ -492,6 +501,7 @@ return {
 		'^/(user) (%d+)$',
 		'^/(ping)$',
 		'^/(s)$',
+		'^/(me)$',
 		
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
