@@ -462,10 +462,12 @@ local action = function(msg, blocks, ln)
 		local text = get_userinfo(user_id, chat_id, chat_name, ln)
 		
 		local res, code = api.sendMessage(user_id, text, true)
-		if msg.chat.type ~= 'private' and code == 403 then
-			api.sendReply(msg, lang[ln].bonus.msg_me, true)
-		else
-			api.sendReply(msg, lang[ln].bonus.general_pm, true)
+		if msg.chat.type ~= 'private' then
+			if code == 403 then
+				api.sendReply(msg, lang[ln].bonus.msg_me, true)
+			else
+				api.sendReply(msg, lang[ln].bonus.general_pm, true)
+			end
 		end
 		
 	elseif blocks[1] == 'banuser' then
