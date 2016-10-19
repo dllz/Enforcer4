@@ -451,7 +451,10 @@ local action = function(msg, blocks, ln)
 		
 		local text = get_userinfo(user_id, msg.chat.id, ln)
 		
-		api.sendMessage(user_id, text, true)
+		local res, code = api.sendMessage(user_id, text, true)
+		if code == 403 then
+			api.sendReply(msg, "Please start @werewolfbutlerbot and try again.")
+		end
 		
 	elseif blocks[1] == 'banuser' then
 		if not is_mod(msg) then
