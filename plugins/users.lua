@@ -43,7 +43,7 @@ local function get_name_getban(msg, blocks, user_id)
 	end
 end
 
-local function get_ban_info(user_id, chat_id, ln)
+local function get_ban_info(user_id, chat_id, title, ln)
 	local hash = 'ban:'..user_id
 	local ban_info = db:hgetall(hash)
 	--if not next(ban_info) then
@@ -69,6 +69,9 @@ local function get_ban_info(user_id, chat_id, ln)
 		if chat_id ~= nil then
 			local warns = (db:hget('chat:'..chat_id..':warns', user_id)) or 0
 			local media_warns = (db:hget('chat:'..chat_id..':mediawarn', user_id)) or 0
+			if title ~= nil then
+				text = text..'\n*Info for group '..title..'*:'
+			end
 			text = text..'\n`Warns`: '..warns..'\n`Media warns`: '..media_warns
 		end
 		return text
@@ -103,8 +106,8 @@ local function check_reply(msg)
 	end
 end
 
-local function get_userinfo(user_id, chat_id, ln)
-	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, ln)
+local function get_userinfo(user_id, chat_id, title, ln)
+	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, title, ln)
 end
 
 local action = function(msg, blocks, ln)
@@ -439,7 +442,7 @@ local action = function(msg, blocks, ln)
 		
 		local keyboard = do_keyboard_userinfo(user_id, ln)
 		
-		local text = get_userinfo(user_id, msg.chat.id, ln)
+		local text = get_userinfo(user_id, msg.chat.id, msg.chat.title, ln)
 		
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
@@ -448,13 +451,15 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'me' then
 		local chat_id = msg.chat.id
+		local chat_name = nil
 		if msg.chat.type == 'private' then 
 			chat_id = nil
+		else
+			chat_name = msg.chat.title:mEscape()
 		end
-		
 		local user_id = msg.from.id
 		
-		local text = get_userinfo(user_id, chat_id, ln)
+		local text = get_userinfo(user_id, chat_id, chat_name, ln)
 		
 		local res, code = api.sendMessage(user_id, text, true)
 		if code == 403 then
