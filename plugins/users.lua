@@ -66,10 +66,12 @@ local function get_ban_info(user_id, chat_id, ln)
 		--if text == '' then
 		--	return lang[ln].getban.nothing
 		--else
+		if chat_id ~= nil then
 			local warns = (db:hget('chat:'..chat_id..':warns', user_id)) or 0
 			local media_warns = (db:hget('chat:'..chat_id..':mediawarn', user_id)) or 0
 			text = text..'\n`Warns`: '..warns..'\n`Media warns`: '..media_warns
-			return text
+		end
+		return text
 		--end
 	--end
 end
@@ -445,11 +447,14 @@ local action = function(msg, blocks, ln)
 			api.sendKeyboard(msg.chat.id, text, keyboard, true)
 		end
 	elseif blocks[1] == 'me' then
-		if msg.chat.type == 'private' then return end
+		local chat_id = msg.chat.id
+		if msg.chat.type == 'private' then 
+			chat_id = nil
+		end
 		
 		local user_id = msg.from.id
 		
-		local text = get_userinfo(user_id, msg.chat.id, ln)
+		local text = get_userinfo(user_id, chat_id, ln)
 		
 		local res, code = api.sendMessage(user_id, text, true)
 		if code == 403 then
