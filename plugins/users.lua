@@ -462,7 +462,7 @@ local action = function(msg, blocks, ln)
 		local text = get_userinfo(user_id, chat_id, chat_name, ln)
 		
 		local res, code = api.sendMessage(user_id, text, true)
-		if code == 403 then
+		if msg.chat.type ~= 'private' and code == 403 then
 			api.sendReply(msg, lang[ln].bonus.msg_me, true)
 		else
 			api.sendReply(msg, lang[ln].bonus.general_pm, true)
