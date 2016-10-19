@@ -119,7 +119,7 @@ local action = function(msg, blocks, ln)
 			if username:find('bot', -3) then return end
 		end
 		
-		if msg.added.id == "95890871" then
+		if msg.added.id == 95890871 then
 				api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
 				return
 		end
