@@ -191,7 +191,7 @@ local action = function(msg, blocks, ln)
 		    	end
 			end
 		  
-		  if blocks[1] == 'banid' then
+		  if blocks[1] == 'idban' then
 		    local is_normal_group = (msg.chat.type == 'group')
 		    local chat_id = msg.chat.id
 		    local user_id = blocks[2]
@@ -451,7 +451,7 @@ return {
 		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
 		'^/(ban)',
-		'^/(banid) (%d+)',
+		'^/(idban) (%d+)',
 		'^/(tempban) (%d+)',
 		'^/(unban) (@[%w_]+)',
 		'^/(unban)',
