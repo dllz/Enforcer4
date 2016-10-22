@@ -15,7 +15,7 @@ end
 
 local action = function(msg, blocks, ln)
     
-    if not(msg.chat.type == 'private') then return end
+    if msg.chat.type ~= 'private' then return end
     
 	if blocks[1] == 'ping' then
 		api.sendMessage(msg.from.id, '*Pong!*', true)
@@ -48,9 +48,7 @@ local action = function(msg, blocks, ln)
 		end
 	end
     if blocks[1] == '!' then
-    	if msg.chat.type ~= 'private' then
-        	return
-    	end
+    	-- it is already checked if is private at line 18
         local input = blocks[2]
         local receiver = msg.from.id
         
@@ -61,7 +59,7 @@ local action = function(msg, blocks, ln)
         end
         
         if msg.reply then
-        	msg = msg.reply
+			msg = msg.reply
         end
 	    
 	    api.forwardMessage (config.admin.owner, msg.from.id, msg.message_id)
@@ -83,9 +81,6 @@ local action = function(msg, blocks, ln)
 	end
 	
 	if blocks[1] == 'usrid' then
-		if msg.chat.type ~= 'private' then
-        	return
-    	end
  		local id = ''
 		local user = ''
  		if msg.reply then
@@ -110,9 +105,6 @@ local action = function(msg, blocks, ln)
 		end 
  	end
 	if blocks[1] == 'userid' then
-		if msg.chat.type ~= 'private' then
-        	return
-    	end
  		local id = ''
 		local user = ''
  		if msg.reply then
