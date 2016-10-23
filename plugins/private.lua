@@ -59,7 +59,8 @@ local action = function(msg, blocks, ln)
         end
         
         if msg.reply then
-			msg = msg.reply
+			api.sendMessage(config.admin.owner, "Two part report")
+			api.forwardMessage(config.admin.owner, msg.reply.from.id, msg.reply.message_id)
         end
 	    
 	    api.forwardMessage (config.admin.owner, msg.from.id, msg.message_id)
