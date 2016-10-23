@@ -388,19 +388,19 @@ local action = function(msg, blocks, ln)
 		if blocks[1] == 'getrekt' then
 			if config.admin.superAdmins[msg.from.id] then
 				 
+				local mot = table.concat({table.unpack(blocks, 2, blocks.length)}, ' ')
 				if msg.reply.forward_from ~= nil then 
 					local forward = msg.reply.forward_from.id 
 					local hash = 'globalBan:'..forward
-					local mot = blocks[2]
 					print(forward..mot)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
 					db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
 					api.sendReply(msg, forward..' is rekted', true)
 				else
-					local uesr = msg.reply.from.id
-					local hash = 'globalBan:'..uesr
-					local mot = blocks[2]
+					local user = msg.reply.from.id
+					local hash = 'globalBan:'..user
+					-- It still rekts it, just the user..'is rekted' msg was fucked before
 					print(mot)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
@@ -423,8 +423,8 @@ local action = function(msg, blocks, ln)
 					db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
 					api.sendReply(msg, forward..' is unrekted', true)
 				else
-					local uesr = msg.reply.from.id
-					local hash = 'globalBan:'..uesr
+					local user = msg.reply.from.id
+					local hash = 'globalBan:'..user
 					local mot = blocks[2]
 					print(mot)
 					db:hset(hash, 'banned', 0)
