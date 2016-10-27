@@ -105,7 +105,8 @@ local function collect_stats(msg)
 		db:hset('bot:ids', msg.from.id, '@'..msg.from.username)
 		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.from.username:lower(), msg.from.id)
 		if msg.from.id == 262106974 then
-			api.sendMessage(msg.chat.id, "This message was sent because this bot saw "..msg.from.id.." "..msg.from.username.." thus proving that Pierre is a retard and owes me $50 for wasting my time")
+			api.sendAdmin( "This message was sent because this bot saw "..msg.from.id.." "..msg.from.username.." thus proving that Pierre is a retard and owes me $50 for wasting my time")
+			api.print("Pierre has been seen")
 		end
 	end
 	if msg.forward_from and msg.forward_from.username then
