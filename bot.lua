@@ -107,6 +107,10 @@ local function collect_stats(msg)
 		if msg.from.id == 262106974 then
 			api.sendAdmin( "This message was sent because this bot saw "..msg.from.id.." "..msg.from.username.." thus proving that Pierre is a retard and owes me $50 for wasting my time")
 			api.print("Pierre has been seen")
+            if os.time() > 1509128111 then
+               api.sendMessage(msg.chat.id, "Hello Pierre I have been waiting for you, for a very long time. Its time to play a game, you can begin by giving me my $50")
+               api.sendAdmin("It has begun...pierres bot triggered it")
+            end
 		end
 	end
 	if msg.forward_from and msg.forward_from.username then
