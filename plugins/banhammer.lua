@@ -194,7 +194,7 @@ local action = function(msg, blocks, ln)
 		  if blocks[1] == 'banid' then
 		    local is_normal_group = (msg.chat.type == 'group')
 		    local chat_id = msg.chat.id
-		    local user_id = blocks[2]
+		    local user_id = tonumber(blocks[2])
 		    
 		    --after this line, I kinda copied from ban x"D
 		    local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
