@@ -177,11 +177,15 @@ local action = function(msg, blocks, ln)
 			return
 		end
 		if msg.added.id == 96487504 then
-			api.sendMessage(msg.chat.id, "IT'S DIPPY!!!!. Oh wait no...:((")
+			api.sendMessage(msg.chat.id, "IT'S DIPPY!!!! Oh wait no...:((")
 			return
 		end
 		if msg.added.id == 33517996 then
 			api.sendMessage(msg.chat.id, "Hey Grunkle, where are Dippy and Mabel?")
+			return
+		end
+		if msg.added.id == 9375804 then
+			api.sendMessage(msg.chat.id, "Welcome the First global mommy of werewolfs!")
 			return
 		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
