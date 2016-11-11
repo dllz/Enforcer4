@@ -522,5 +522,24 @@ return {
 		
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
+
+        '^!(id)$',
+        '^!(adminlist)$',
+        '^!(status) (@[%w_]+)$',
+        '^!(status) (%d+)$',
+        '^!(settings)$',
+        '^!(export)(ban)$',
+        '^!(export)(save)$',
+        '^!(importban)$',
+        '^!(support)$',
+        '^!(welcome) (.*)$',
+        '^!(welcome)$',
+        '^!(user)$',
+        '^!(user) (.+)$', --this is to get also /user + text mention
+        '^!(user) (@[%w_]+)$',
+        '^!(user) (%d+)$',
+        '^!(ping)$',
+        '^!(s)$',
+        '^!(me)$',
 	}
 }
