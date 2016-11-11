@@ -35,6 +35,7 @@ return {
 	action = action,
 	triggers = {
 		'^/(lang)$',
-		'^###cb:(langselected):(%a%a)$'
+		'^###cb:(langselected):(%a%a)$',
+		'^!(lang)$',
 	}
 }
