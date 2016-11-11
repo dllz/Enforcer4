@@ -149,5 +149,7 @@ return {
 		'^/(warn) (.*)$',
 		'^###cb:(resetwarns):(%d+)$',
 		'^###cb:(removewarn):(%d+)$',
+		'^!(warn)$',
+		'^!(warn) (.*)$',
 	}
 }
