@@ -343,7 +343,7 @@ local action = function(msg, blocks, ln)
 		    			why = msg.text:input()
 						
 		    		else
-		    			why = msg.text:gsub('^/ban @[%w_]+%s?', '')
+		    			why = msg.text:gsub('^!ban @[%w_]+%s?', '')
 		    		end
 					--id = getId(msg)
 		    		cross.addBanList(msg.chat.id, user_id, nick, why)
