@@ -455,13 +455,31 @@ return {
 		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
 		'^/(ban)$',
-		'^/(ban) '
+		'^/(ban) ',
 		'^/(tempban) (%d+)',
 		'^/(unban) (@[%w_]+)',
 		'^/(unban)',
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
 		'^/(getrekt) ([%w]+)',
-		'^/(unrekt) ([%w]+)'
+		'^/(unrekt) ([%w]+)',
+        '^!(kickme)%s?',
+        '^!(kickid) (%d+)',
+        '^!(kick) (@[%w_]+)',
+        '^!(kick)',
+        '^!(kickid) (%d+)',
+        '^!(banid) (%d+)',
+        '^!(banlist)$',
+        '^!(banlist) (-)$',
+        '^!(ban) (@[%w_]+)',
+        '^!(ban)$',
+        '^!(ban) ',
+        '^!(tempban) (%d+)',
+        '^!(unban) (@[%w_]+)',
+        '^!(unban)',
+        '^###cb:(unban):(%d+)$',
+        '^###cb:(banlist)(-)$',
+        '^!(getrekt) ([%w]+)',
+        '^!(unrekt) ([%w]+)'
 	}
 }
