@@ -140,15 +140,10 @@ return {
 		'^/(strings)$',
 		'^/(strings) (%a%a)$',
 		'^/(echo) (.*)$',
+		'^/(c)%s?',
+		'^(!)$',
+		'^(!)(.+)',
 		'^/(info)$',
 		'^/(resolve) (@[%w_]+)$',
-		'^!(userid)$',
-		'^!(usrid)$',
-		'^!(ping)$',
-		'^!(strings)$',
-		'^!(strings) (%a%a)$',
-		'^!(echo) (.*)$',
-		'^!(info)$',
-		'^!(resolve) (@[%w_]+)$',
 	}
 }
