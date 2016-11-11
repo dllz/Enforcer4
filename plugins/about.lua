@@ -77,10 +77,10 @@ return {
 	action = action,
 	get_about = get_about,
 	triggers = {
-		'^/(setabout)$', --to warn if an user don't add a text
-		'^/(setabout) (.*)',
-		'^/(about)$',
-		'^/(addabout)$', --to warn if an user don't add a text
-		'^/(addabout) (.*)',
+		'^!(setabout)$', --to warn if an user don't add a text
+		'^!(setabout) (.*)',
+		'^!(about)$',
+		'^!(addabout)$', --to warn if an user don't add a text
+		'^!(addabout) (.*)',
 	}
 }

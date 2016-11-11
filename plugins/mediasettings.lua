@@ -107,6 +107,8 @@ return {
 		'^###cb:(media):(.*):(.*)',
 		'^/(media list)$',
 		'^/(media)$',
+		'^!(media list)$',
+		'^!(media)$',
 		
 
 	}

@@ -62,6 +62,10 @@ return {
 		'^/(link)$',
 		'^/(setlink)$',
 		'^/(setlink) https://telegram%.me/joinchat/(.*)',
-		'^/(setlink) (no)'
+		'^/(setlink) (no)',
+		'^!(link)$',
+		'^!(setlink)$',
+		'^!(setlink) https://telegram%.me/joinchat/(.*)',
+		'^!(setlink) (no)'
 	}
 }

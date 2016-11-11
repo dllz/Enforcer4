@@ -41,5 +41,8 @@ return {
     triggers = {
         '^/(faq)$',
         '^/(faq) (%d%d?)',
+
+        '^!(faq)$',
+        '^!(faq) (%d%d?)',
     }
 }

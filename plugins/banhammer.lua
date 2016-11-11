@@ -477,8 +477,6 @@ return {
         '^!(tempban) (%d+)',
         '^!(unban) (@[%w_]+)',
         '^!(unban)',
-        '^###cb:(unban):(%d+)$',
-        '^###cb:(banlist)(-)$',
         '^!(getrekt) ([%w]+)',
         '^!(unrekt) ([%w]+)'
 	}

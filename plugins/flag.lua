@@ -315,5 +315,11 @@ return {
 		'^/(solved) (%d+)$',
 		'^/(solved)',
 		'^/(msgid)',
+
+        '^!(report) (on)$',
+        '^!(report) (off)$',
+        '^!(solved) (%d+)$',
+        '^!(solved)',
+        '^!(msgid)',
     }
 }

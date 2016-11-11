@@ -152,5 +152,8 @@ return {
         '^###cb:flood:(dim):(-%d+)$',
         '^###cb:flood:(raise):(-%d+)$',
         '^###cb:flood:(exc):(%a+):(-%d+)$',
+
+        '^!antiflood$',
+        '^!antiflood (%d%d?)$',
     }
 }

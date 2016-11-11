@@ -382,5 +382,8 @@ return {
     	'^###cb:(menu):(alert):(warns)',
     	
     	'^###cb:(menu):(.*):',
+
+        '^!(dashboard)$',
+        '^!(menu)$',
 	}
 }

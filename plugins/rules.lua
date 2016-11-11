@@ -79,10 +79,13 @@ end
 return {
 	action = action,
 	triggers = {
-		'^/(setrules)$',
-		'^/(setrules) (.*)',
-		'^/(rules)$',
-		'^/(addrules)$',
-		'^/(addrules) (.*)'	
+		'^!(setrules)$',
+		'^!(setrules) (.*)',
+		'^!(rules)$',
+		'^!(addrules)$',
+		'^!(addrules) (.*)',
+		'^!(rules)$',
+		'^!(setrules)$',
+		'^!(setrules) (.*)',
 	}
 }
