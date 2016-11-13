@@ -43,7 +43,7 @@ local function sendRequest(url)
 			tab = JSON.decode(dat)
 		end
 	else
-		api.sendLog('#UpdateFailed\n'..dump(tab))
+		api.sendLog('#UpdateFailed\n'..dump(tab)..'\n'..code)
 	end
 	if code ~= 200 then
 		print(clr.red..code, tab.description..clr.reset)
