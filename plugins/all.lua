@@ -339,6 +339,18 @@ local action = function(msg, blocks, ln)
 	        return
 	    end
 	    if msg.cb then
+			local list, code = api.getChatAdministrators(chat_id)
+			if list == nil then return end
+			local ismod = false
+			
+			for usr in list do
+				if usr ~= nil and usr.user.id == msg.from.id then
+					ismod = true
+					break
+				end
+			end
+			if not ismod then return end -- This should catch demoted guyz
+			
 	        local text
 	        if blocks[2] == 'alert' then
 	            if blocks[3] == 'settings' then
