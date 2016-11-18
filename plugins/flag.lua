@@ -59,7 +59,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback_data = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback_data = 'kickflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid},{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
 				--temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			else
-				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solvedflag:'..message.chat.id..':'..reportid},{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid},{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
 				--temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			end
 		else
@@ -522,10 +522,10 @@ return {
 		'^/(solved)',
 		'^/(msgid)',
 
-		'^###cb:(banflag):(%d):(%d+)$',
-		'^###cb:(kickflag):(%d):(%d+)$',
-		'^###cb:(warnflag):(%d):(%d+)$',
-		'^###cb:(solveflag):(%d):(%d+)$',
+		'^###cb:(banflag):(%d):(%d+)',
+		'^###cb:(kickflag):(%d):(%d+)',
+		'^###cb:(warnflag):(%d):(%d+)',
+		'^###cb:(solveflag):(%d):(%d+)',
 
         '^!(report) (on)$',
         '^!(report) (off)$',
