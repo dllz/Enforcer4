@@ -260,6 +260,7 @@ local action = function(msg, blocks, ln)
 			cross.addBanList(msg.chat.id, user_id, nick, why)
 			db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 			api.answerCallbackQuery(msg.cb_id, 'User Banned')
+			api.sendMessage(chat_id, user_id.." has been banned by "..msg.cb_id)
 		end
 	elseif blocks[1] == 'kickflag' then
 		local chat_id = blocks[2]
@@ -273,6 +274,7 @@ local action = function(msg, blocks, ln)
                 api.answerCallbackQuery(msg.cb_id, 'Kick Failed, please manually unban ')
 			end
 		else
+			api.sendMessage(chat_id, user_id.." has been kicked by"..msg.cb_id)
             api.answerCallbackQuery(msg.cb_id, 'User kicked')
 		end
 	elseif blocks[1] == 'solveflag' then
@@ -320,8 +322,8 @@ local action = function(msg, blocks, ln)
 						api.editMessageText(id, msgID, text..'\nReport ID: '..repID, false, false)
 					end
 				end
-
 			end
+			api.sendMessage(chat, "#Report ID: "..msg_id.." solved")
 			api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
 		elseif alreadyReported == '1' then
 			local solvedTime = db:hget(hash14, 'SolvedAt')
