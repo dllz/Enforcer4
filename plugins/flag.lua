@@ -216,14 +216,14 @@ local action = function(msg, blocks, ln)
 				end
 				db:hdel('chat:'..chat_id..':warns', user_id) --if kick/ban works, remove the warns
 				db:hdel('chat:'..chat_id..':mediawarn', user_id)
-				api.sendMessage(chat_id, user_id.." has been banned by "..msg.chat)
+				api.sendMessage(chat_id, user_id.." has been banned by "..msg.chat.id)
 			end
 			api.answerCallbackQuery(msg.cb_id, text) --if the user reached the max num of warns, kick and send message
 		else
 			local diff = tonumber(nmax)-tonumber(num)
 			text = make_text(lang[ln].warn.warned, name:mEscape(), num, nmax)
 			api.answerCallbackQuery(msg.cb_id, text..'\nID:'..user_id) --if the user is under the max num of warnings, send the inline keyboard
-			api.sendMessage(chat_id, text.."\nby "..msg.chat)
+			api.sendMessage(chat_id, text.."\nby "..msg.chat.id)
 		end
 	elseif blocks[1] == 'banflag' then
 		local chat_id = blocks[2]
@@ -261,7 +261,7 @@ local action = function(msg, blocks, ln)
 			cross.addBanList(msg.chat.id, user_id, user_id, why)
 			db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 			api.answerCallbackQuery(msg.cb_id, 'User Banned')
-			api.sendMessage(chat_id, user_id.." has been banned by "..msg.chat)
+			api.sendMessage(chat_id, user_id.." has been banned by "..msg.chat.id)
 		end
 	elseif blocks[1] == 'kickflag' then
 		local chat_id = blocks[2]
@@ -275,7 +275,7 @@ local action = function(msg, blocks, ln)
                 api.answerCallbackQuery(msg.cb_id, 'Kick Failed, please manually unban ')
 			end
 		else
-			api.sendMessage(chat_id, user_id.." has been kicked by"..msg.chat)
+			api.sendMessage(chat_id, user_id.." has been kicked by"..msg.chat.id)
             api.answerCallbackQuery(msg.cb_id, 'User kicked')
 		end
 	elseif blocks[1] == 'solveflag' then
@@ -324,7 +324,7 @@ local action = function(msg, blocks, ln)
 					end
 				end
 			end
-			api.sendMessage(chat, "#Report ID: "..msg_id.." solved by "..msg.chat)
+			api.sendMessage(chat, "#Report ID: "..msg_id.." solved by "..msg.chat.id)
 			api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
 		elseif alreadyReported == '1' then
 			local solvedTime = db:hget(hash14, 'SolvedAt')
