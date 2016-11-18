@@ -54,7 +54,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		--print('101'..i)
 		local temp
 		--print("MOD ID:"..mods[i])
-		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid)
+		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved')
 		--print("CODE: ", code)
 		--print("DATADUMP:", dump(temp))
 		if temp ~= false and code == nil then 
@@ -265,7 +265,7 @@ local action = function(msg, blocks, ln)
 					reporter = db:hget(hash14, 'Reporter')
 					repID = db:hget(hash14, 'repID')
 					--print("counter", counter)
-					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
+					local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter..'\n#Solved'
 					for i=1, counter, 1 do
 						local id = db:hget(hash14, 'adminID'..i)
 						--print("id", id)
