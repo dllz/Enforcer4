@@ -522,10 +522,10 @@ return {
 		'^/(solved)',
 		'^/(msgid)',
 
-		'^###cb:(banflag):(%d):(%d+)',
-		'^###cb:(kickflag):(%d):(%d+)',
-		'^###cb:(warnflag):(%d):(%d+)',
-		'^###cb:(solveflag):(%d):(%d+)',
+		'^###cb:(banflag):(%d-):(%d+)',
+		'^###cb:(kickflag):(%d-):(%d+)',
+		'^###cb:(warnflag):(%d-):(%d+)',
+		'^###cb:(solveflag):(%d-):(%d+)',
 
         '^!(report) (on)$',
         '^!(report) (off)$',
