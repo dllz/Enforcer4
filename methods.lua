@@ -219,7 +219,7 @@ local function kickUser(chat_id, user_id, ln)-- no_msg: don't send the error mes
 		print('inside else statment because result failed')
 		print("Returned: ", dump(res), " Code: ", code)
 		local motivation = api.code2text(code, ln)
-		return true, motivation
+		return true	, motivation
 	end
 	print('kicked finished')
 	
