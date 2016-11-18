@@ -195,11 +195,11 @@ local action = function(msg, blocks, ln)
 			local type = (db:hget('chat:'..chat_id..':warnsettings', 'type')) or 'kick'
 			--try to kick/ban
 			if type == 'ban' then
-				text = make_text(lang[ln].warn.warned_max_ban, name:mEscape())..' ('..num..'/'..nmax..')'
+				text = make_text(lang[ln].warn.warned_max_ban, user_id)..' ('..num..'/'..nmax..')'
 				local is_normal_group = false
 				res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
 			else --kick
-			text = make_text(lang[ln].warn.warned_max_kick, name:mEscape())..' ('..num..'/'..nmax..')'
+			text = make_text(lang[ln].warn.warned_max_kick, user_id)..' ('..num..'/'..nmax..')'
 			res, motivation = api.kickUser(chat_id, user_id, ln)
 			end
 			--if kick/ban fails, send the motivation
@@ -221,7 +221,7 @@ local action = function(msg, blocks, ln)
 			api.answerCallbackQuery(msg.cb_id, text, true) --if the user reached the max num of warns, kick and send message
 		else
 			local diff = tonumber(nmax)-tonumber(num)
-			text = make_text(lang[ln].warn.warned, name:mEscape(), num, nmax)
+			text = make_text(lang[ln].warn.warned, user_id, num, nmax)
 			api.answerCallbackQuery(msg.cb_id, text..'\nID: '..user_id, true) --if the user is under the max num of warnings, send the inline keyboard
 			api.sendMessage(chat_id, text.."\nby "..msg.chat.id..'\nID: '..user_id, true)
 		end
