@@ -350,6 +350,7 @@ local action = function(msg, blocks, ln)
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 		    		api.sendKeyboard(msg.chat.id, lang[ln].banhammer.banned:build_text(get_nick(msg, false, true):mEscape(), nick:mEscape()), {inline_keyboard = {{{text = 'Unban', callback_data = 'unban:'..user_id}}}}, true)
 					if msg.reply then
+						api.sendMessage(msg.from.id, msg.reply.from.id..' banned on '..os.date('%d %B %Y, %X')..' UTC')
 						api.forwardMessage(msg.from.id, msg.chat.id, msg.reply.message_id)
 					end
 		    	end
