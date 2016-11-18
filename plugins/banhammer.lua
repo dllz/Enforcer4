@@ -119,11 +119,14 @@ end
 
 local action = function(msg, blocks, ln)
 	if msg.chat.type ~= 'private' then
-		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
+		local chatMod = is_mod(msg)
+		if chatMod or config.admin.superAdmins[msg.from.id] then
 			--commands that don't need a target user
 			if blocks[1] == 'kickme' then
-				api.sendReply(msg, lang[ln].kick_errors[2], true)
-				return
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
+					return
+				end
 			end
 			if blocks[1] == 'banlist' and not blocks[2] then
    				local banlist, is_empty = getBanList(msg.chat.id, ln)
@@ -176,6 +179,10 @@ local action = function(msg, blocks, ln)
 	    	end
 			
 			if blocks[1] == 'kickid' then
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
+					return
+				end
 				local res, motivation = api.kickUser(msg.chat.id, blocks[2], ln)
 		    	if not res then
 		    		if not motivation then
@@ -192,6 +199,10 @@ local action = function(msg, blocks, ln)
 			end
 		  
 		    if blocks[1] == 'banid' then
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
+					return
+				end
                 local is_normal_group = (msg.chat.type == 'group')
                 local chat_id = msg.chat.id
                 local user_id = blocks[2]
@@ -253,6 +264,10 @@ local action = function(msg, blocks, ln)
 					api.sendReply(msg, lang[ln].banhammer.reply)
 					return
 				end
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
+					return
+				end
 				local user_id = msg.reply.from.id
 				local temp, code = check_valid_time(blocks[2])
 				if not temp then
@@ -290,8 +305,8 @@ local action = function(msg, blocks, ln)
 			end
 
 		 	if blocks[1] == 'kick' then
-				if ismod(msg) then
-					api.sendReply(msg, lang[ln].banhammer.general_motivation)
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
 					return
 				end
 		    	local res, motivation = api.kickUser(chat_id, user_id, ln)
@@ -313,6 +328,10 @@ local action = function(msg, blocks, ln)
 	   		if msg.chat.type == 'group' then is_normal_group = true end
 	   		
 	   		if blocks[1] == 'ban' then
+				if chatMod then
+					api.sendReply(msg, lang[ln].kick_errors[2], true)
+					return
+				end
 	   			local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
 		    	if not res then
 		    		if not motivation then
