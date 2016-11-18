@@ -174,6 +174,10 @@ local action = function(msg, blocks, ln)
 				if msg.chat.type == 'group' and is_banned(msg.chat.id, user_id) then
 					status = 'kicked'
 				end
+				reason = db:hget('chat:'..msg.chat.id..':bannedlist:'..user_id, 'why')
+				if reason ~= nil then
+					name = name.." "..reason
+				end
 		 		local text = make_text(lang[ln].status[status], name)
 		 		api.sendReply(msg, text)
 		 	end
