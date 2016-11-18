@@ -253,11 +253,10 @@ local action = function(msg, blocks, ln)
 			--save the ban
 			cross.saveBan(user_id, 'ban')
 			--add to banlist
-			local nick = get_nick(msg, blocks) --banned user
 			local why
 			why = msg.text:gsub('^!ban @[%w_]+%s?', 'Banned in PM')
 			--id = getId(msg)
-			cross.addBanList(msg.chat.id, user_id, nick, why)
+			cross.addBanList(msg.chat.id, user_id, user_id, why)
 			db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 			api.answerCallbackQuery(msg.cb_id, 'User Banned')
 			api.sendMessage(chat_id, user_id.." has been banned by "..msg.cb_id)
