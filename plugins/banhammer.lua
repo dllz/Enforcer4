@@ -119,11 +119,11 @@ end
 
 local action = function(msg, blocks, ln)
 	if msg.chat.type ~= 'private' then
-		local chatMod = is_mod(msg)
-		if chatMod or config.admin.superAdmins[msg.from.id] then
+		local chatMod = is_moduser(msg)
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			--commands that don't need a target user
 			if blocks[1] == 'kickme' then
-				if chatMod then
+				if is_mod(msg) then
 					api.sendReply(msg, lang[ln].kick_errors[2], true)
 					return
 				end
