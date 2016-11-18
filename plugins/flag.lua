@@ -223,7 +223,7 @@ local action = function(msg, blocks, ln)
 			local diff = tonumber(nmax)-tonumber(num)
 			text = make_text(lang[ln].warn.warned, name:mEscape(), num, nmax)
 			api.answerCallbackQuery(msg.cb_id, text..'\nID: '..user_id, true) --if the user is under the max num of warnings, send the inline keyboard
-			api.sendMessage(chat_id, text.."\nby "..msg.chat.id..'\nID: '..user_id)
+			api.sendMessage(chat_id, text.."\nby "..msg.chat.id..'\nID: '..user_id, true)
 		end
 	elseif blocks[1] == 'banflag' then
 		local chat_id = blocks[2]
