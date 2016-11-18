@@ -102,6 +102,7 @@ function is_mod2(chat_id, user_id)
 	end
 end
 
+
 function is_owner(msg)
 	local status = api.getChatMember(msg.chat.id, msg.from.id).result.status
 	if status == 'creator' then

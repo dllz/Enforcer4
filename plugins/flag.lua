@@ -186,6 +186,10 @@ local action = function(msg, blocks, ln)
 	elseif blocks[1] == 'warnflag' then
 		local chat_id = blocks[2]
 		local user_id = blocks[3]
+		if is_mod2(chat_id, user_id) then
+			api.answerCallbackQuery(msg.cb_id, lang[ln].kick_errors[2], true)
+			return
+		end
 		local hash = 'chat:'..chat_id..':warns'
 		local num = db:hincrby(hash,user_id, 1) --add one warn
 		local nmax = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or 3 --get the max num of warnings
