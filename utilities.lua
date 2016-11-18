@@ -73,7 +73,7 @@ function is_mod(msg)
 	end
 end
 function is_moduser(msg)
-	if msg.reply then
+	if msg.reply ~= nil then
 		local res = api.getChatMember(msg.chat.id, msg.reply.from.id)
 		if not res then
 			return false, false
