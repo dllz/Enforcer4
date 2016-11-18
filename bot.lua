@@ -329,6 +329,7 @@ end
 
 local function handle_inline_keyboards_cb(msg)
 	msg.text = '###cb:'..msg.data
+	print(msg.text)
 	msg.old_text = msg.message.text
 	msg.old_date = msg.message.date
 	msg.date = os.time()
