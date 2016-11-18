@@ -356,6 +356,7 @@ local action = function(msg, blocks, ln)
 			local repID = db:hget(hash14, 'repID')
 			--print("counter", counter)
 			local group = api.getChat(chat)
+			print(dump(group))
 			local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..group.title..')\nIt was reported by: '..reporter
 			for i=1, counter, 1 do
 				local id = db:hget(hash14, 'adminID'..i)
