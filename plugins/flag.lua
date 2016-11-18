@@ -181,9 +181,149 @@ local action = function(msg, blocks, ln)
                     end
                 end
             end
-        end
-	elseif blocks[1] == 'kickflag' then
+		end
+	elseif blocks[1] == 'warnflag' then
+		local chat_id = blocks[2]
+		local user_id = blocks[3]
+		local hash = 'chat:'..chat_id..':warns'
+		local num = db:hincrby(hash,user_id, 1) --add one warn
+		local nmax = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or 3 --get the max num of warnings
+		local text, res, motivation
 
+		if tonumber(num) >= tonumber(nmax) then
+			local type = (db:hget('chat:'..chat_id..':warnsettings', 'type')) or 'kick'
+			--try to kick/ban
+			if type == 'ban' then
+				text = make_text(lang[ln].warn.warned_max_ban, name:mEscape())..' ('..num..'/'..nmax..')'
+				local is_normal_group = false
+				res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
+			else --kick
+			text = make_text(lang[ln].warn.warned_max_kick, name:mEscape())..' ('..num..'/'..nmax..')'
+			res, motivation = api.kickUser(chat_id, user_id, ln)
+			end
+			--if kick/ban fails, send the motivation
+			if not res then
+				if not motivation then
+					motivation = lang[ln].banhammer.general_motivation
+				end
+				text = motivation
+			else
+				cross.saveBan(user_id, 'warn') --add ban
+				if type == 'ban' then --add to the banlist
+				local why = lang[ln].warn.ban_motivation
+				cross.addBanList(chat_id, user_id, '', why)
+				end
+				db:hdel('chat:'..chat_id..':warns', user_id) --if kick/ban works, remove the warns
+				db:hdel('chat:'..chat_id..':mediawarn', user_id)
+			end
+			api.answerCallbackQuery(msg.cb_id, text) --if the user reached the max num of warns, kick and send message
+		else
+			local diff = tonumber(nmax)-tonumber(num)
+			text = make_text(lang[ln].warn.warned, name:mEscape(), num, nmax)
+			api.answerCallbackQuery(msg.cb_id, text..'\nID:'..user_id) --if the user is under the max num of warnings, send the inline keyboard
+		end
+	elseif blocks[1] == 'banflag' then
+		local chat_id = blocks[2]
+		local user_id = blocks[3]
+		local is_normal_group = false
+		local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
+		if not res then
+			if not motivation then
+				motivation = lang[ln].banhammer.general_motivation
+			end
+			api.answerCallbackQuery(msg.cb_id, motivation)
+		else
+			local is_already_tempbanned = db:sismember('chat:'..chat_id..':tempbanned', user_id)
+			if is_already_tempbanned then
+				print('Is already tempbanned')
+				local all = db:hgetall('tempbanned')
+				if next(all) then
+					for unban_time,info in pairs(all) do
+						--print(chat_id..':'..user_id..' '..info)
+						if string.match(chat_id..':'..user_id, info) then
+							db:hdel('tempbanned', unban_time)
+							--print('TimeRemoved '..unban_time)
+						end
+					end
+				end
+				db:srem('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
+				--print('Removed from db '..'chat:'..chat_id..':tempbanned '..user_id)
+			end
+			--save the ban
+			cross.saveBan(user_id, 'ban')
+			--add to banlist
+			local nick = get_nick(msg, blocks) --banned user
+			local why
+			why = msg.text:gsub('^!ban @[%w_]+%s?', 'Banned in PM')
+			--id = getId(msg)
+			cross.addBanList(msg.chat.id, user_id, nick, why)
+			db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
+			api.answerCallbackQuery(msg.cb_id, 'User Banned')
+		end
+	elseif blocks[1] == 'kickflag' then
+		local chat_id = blocks[2]
+		local user_id = blocks[3]
+		local res, motivation = api.kickUser(chat_id, user_id, ln)
+		if not res then
+			if not motivation then
+				motivation = lang[ln].banhammer.general_motivation
+				api.sendReply(msg, motivation, true)
+			else
+				api.sendReply(msg, 'Kick Failed, please manually unban ')
+			end
+		else
+			db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
+			cross.saveBan(user_id, 'kick')
+			api.answerCallbackQuery(msg.cb_id, "Banned")
+			print("Mesesage ID:", msg_id)
+			local hash12 = 'flagged:'..chat..':'..msg_id
+			local isSolved1 = db:hget(hash12, 'Solved')
+			--print("12213213")
+			local hash13 = 'flagged:'..chat..':'..msg_id+1
+			local isSolved2 = db:hget(hash13, 'Solved')
+			if isSolved1 then
+				hash14 = 'flagged:'..chat..':'..msg_id
+			elseif isSolved2 then
+				hash14 = 'flagged:'..chat..':'..msg_id+1
+			end
+
+			local alreadyReported = db:hget(hash14, 'Solved')
+			--print("Reprorteorijt", alreadyReported)
+			if alreadyReported == '0' then
+				local solvedBy = msg.from.first_name
+				if msg.from.username then solvedBy = solvedBy..' (@'..msg.from.username..')' end
+				local solvedAt = os.date('!%c (UCT)')
+
+				db:hset(hash14, 'SolvedAt', solvedAt)
+				db:hset(hash14, 'solvedBy', solvedBy)
+				db:hset(hash14, 'Solved', 1)
+				local counter = db:hget(hash14, '#Admin')
+				local reporter = db:hget(hash14, 'Reporter')
+				local repID = db:hget(hash14, 'repID')
+				--print("counter", counter)
+				local group = api.getChat(chat)
+				local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..group.title..')\nIt was reported by: '..reporter
+				for i=1, counter, 1 do
+					local id = db:hget(hash14, 'adminID'..i)
+					--print("id", id)
+					local msgID = db:hget(hash14, 'Message'..i)
+					--print("msgid", msgID)
+					if id ~= nil then
+						--print("id", id)
+						if msgID ~= nil then
+							--print("msgid", msgID)
+							api.editMessageText(id, msgID, text..'\nReport ID: '..repID, false, false)
+						end
+					end
+
+				end
+				api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
+			elseif alreadyReported == '1' then
+				local solvedTime = db:hget(hash14, 'SolvedAt')
+				local solvedBy = db:hget(hash14, 'solvedBy')
+				api.answerCallbackQuery(msg.cb_id, 'This message was solved at '..solvedTime..' by '..solvedBy)
+			end
+		end
 	elseif blocks[1] == 'solveflag' then
 		if is_mod(msg) then
 			local msg_id = blocks[3]
@@ -230,11 +370,11 @@ local action = function(msg, blocks, ln)
 					end
 
 				end
-				api.sendReply(msg, 'Marked as solved')
+				api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
 			elseif alreadyReported == '1' then
 				local solvedTime = db:hget(hash14, 'SolvedAt')
 				local solvedBy = db:hget(hash14, 'solvedBy')
-				api.sendReply(msg, 'This message was solved at '..solvedTime..' by '..solvedBy)
+				api.answerCallbackQuery(msg.cb_id, 'This message was solved at '..solvedTime..' by '..solvedBy)
 			end
 		end
 	elseif blocks[1] == 'solved' then
