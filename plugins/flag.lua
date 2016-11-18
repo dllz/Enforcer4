@@ -128,8 +128,6 @@ end
 
 local action = function(msg, blocks, ln)
     
-    if msg.chat.type == 'private' then return end
-    
     local hash = 'chat:'..msg.chat.id..':reportblocked'
     if blocks[1] == 'admin' then
         --return 
