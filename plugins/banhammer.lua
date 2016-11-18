@@ -290,7 +290,10 @@ local action = function(msg, blocks, ln)
 			end
 
 		 	if blocks[1] == 'kick' then
-				if ismod(msg) then api.sendReply(msg, lang[ln].banhammer.general_motivati) end
+				if ismod(msg) then
+					api.sendReply(msg, lang[ln].banhammer.general_motivation)
+					return
+				end
 		    	local res, motivation = api.kickUser(chat_id, user_id, ln)
 		    	if not res then
 		    		if not motivation then
