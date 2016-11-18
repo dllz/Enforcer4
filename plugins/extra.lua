@@ -54,6 +54,7 @@ local action = function(msg, blocks, ln)
 				end
     		else
 	    		db:hset(hash, blocks[2], blocks[3])
+				db:hdel(hash..':'..blocks[2], 'mediaid')
 	    		local msg_id = res.result.message_id
 				api.editMessageText(msg.chat.id, msg_id, make_text(lang[ln].extra.setted, blocks[2]), false)
     		end
