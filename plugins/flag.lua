@@ -41,7 +41,7 @@ local function is_report_blocked(msg)
     return db:sismember(hash, msg.from.id)
 end
 
-local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg, reportid)
+local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg, reportid, username)
 	counter = 0
 	result = {}
 	adminID = {}
@@ -54,7 +54,11 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		--print('101'..i)
 		local temp
 		--print("MOD ID:"..mods[i])
-		temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved')
+		if username ~= nil then
+			temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
+		else
+			temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved')
+		end
 		--print("CODE: ", code)
 		--print("DATADUMP:", dump(temp))
 		if temp ~= false and code == nil then 
@@ -144,7 +148,8 @@ local action = function(msg, blocks, ln)
             end
             local reporter = msg.from.first_name
             if msg.from.username then reporter = reporter..' (@'..msg.from.username..')' end
-            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID)
+            local username = msg.chat.username
+            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID, username)
             api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
         end
     end
