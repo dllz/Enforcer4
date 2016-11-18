@@ -222,8 +222,8 @@ local action = function(msg, blocks, ln)
 		else
 			local diff = tonumber(nmax)-tonumber(num)
 			text = make_text(lang[ln].warn.warned, name:mEscape(), num, nmax)
-			api.answerCallbackQuery(msg.cb_id, text..'\nID:'..user_id, true) --if the user is under the max num of warnings, send the inline keyboard
-			api.sendMessage(chat_id, text.."\nby "..msg.chat.id..'\nID:'..user_id)
+			api.answerCallbackQuery(msg.cb_id, text..'\nID: '..user_id, true) --if the user is under the max num of warnings, send the inline keyboard
+			api.sendMessage(chat_id, text.."\nby "..msg.chat.id..'\nID: '..user_id)
 		end
 	elseif blocks[1] == 'banflag' then
 		local chat_id = blocks[2]
@@ -275,7 +275,7 @@ local action = function(msg, blocks, ln)
                 api.answerCallbackQuery(msg.cb_id, 'Kick Failed, please manually unban', true)
 			end
 		else
-			api.sendMessage(chat_id, user_id.." has been kicked by"..msg.chat.id)
+			api.sendMessage(chat_id, user_id.." has been kicked by "..msg.chat.id)
             api.answerCallbackQuery(msg.cb_id, 'User kicked')
 		end
 	elseif blocks[1] == 'solveflag' then
