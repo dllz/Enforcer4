@@ -326,57 +326,56 @@ local action = function(msg, blocks, ln)
 			end
 		end
 	elseif blocks[1] == 'solveflag' then
-		if is_mod(msg) then
-			local msg_id = blocks[3]
-			local chat = blocks[2]
-			print("Mesesage ID:", msg_id)
-			local hash12 = 'flagged:'..chat..':'..msg_id
-			local isSolved1 = db:hget(hash12, 'Solved')
-			--print("12213213")
-			local hash13 = 'flagged:'..chat..':'..msg_id+1
-			local isSolved2 = db:hget(hash13, 'Solved')
-			if isSolved1 then
-				hash14 = 'flagged:'..chat..':'..msg_id
-			elseif isSolved2 then
-				hash14 = 'flagged:'..chat..':'..msg_id+1
-			end
+		print('Solved callback')
+		local msg_id = blocks[3]
+		local chat = blocks[2]
+		print("Mesesage ID:", msg_id)
+		local hash12 = 'flagged:'..chat..':'..msg_id
+		local isSolved1 = db:hget(hash12, 'Solved')
+		--print("12213213")
+		local hash13 = 'flagged:'..chat..':'..msg_id+1
+		local isSolved2 = db:hget(hash13, 'Solved')
+		if isSolved1 then
+			hash14 = 'flagged:'..chat..':'..msg_id
+		elseif isSolved2 then
+			hash14 = 'flagged:'..chat..':'..msg_id+1
+		end
 
-			local alreadyReported = db:hget(hash14, 'Solved')
-			--print("Reprorteorijt", alreadyReported)
-			if alreadyReported == '0' then
-				local solvedBy = msg.from.first_name
-				if msg.from.username then solvedBy = solvedBy..' (@'..msg.from.username..')' end
-				local solvedAt = os.date('!%c (UCT)')
+		local alreadyReported = db:hget(hash14, 'Solved')
+		--print("Reprorteorijt", alreadyReported)
+		if alreadyReported == '0' then
+			local solvedBy = msg.from.first_name
+			if msg.from.username then solvedBy = solvedBy..' (@'..msg.from.username..')' end
+			local solvedAt = os.date('!%c (UCT)')
 
-				db:hset(hash14, 'SolvedAt', solvedAt)
-				db:hset(hash14, 'solvedBy', solvedBy)
-				db:hset(hash14, 'Solved', 1)
-				local counter = db:hget(hash14, '#Admin')
-				local reporter = db:hget(hash14, 'Reporter')
-				local repID = db:hget(hash14, 'repID')
-				--print("counter", counter)
-				local group = api.getChat(chat)
-				local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..group.title..')\nIt was reported by: '..reporter
-				for i=1, counter, 1 do
-					local id = db:hget(hash14, 'adminID'..i)
+			db:hset(hash14, 'SolvedAt', solvedAt)
+			db:hset(hash14, 'solvedBy', solvedBy)
+			db:hset(hash14, 'Solved', 1)
+			local counter = db:hget(hash14, '#Admin')
+			local reporter = db:hget(hash14, 'Reporter')
+			local repID = db:hget(hash14, 'repID')
+			--print("counter", counter)
+			local group = api.getChat(chat)
+			local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..group.title..')\nIt was reported by: '..reporter
+			for i=1, counter, 1 do
+				local id = db:hget(hash14, 'adminID'..i)
+				--print("id", id)
+				local msgID = db:hget(hash14, 'Message'..i)
+				--print("msgid", msgID)
+				if id ~= nil then
 					--print("id", id)
-					local msgID = db:hget(hash14, 'Message'..i)
-					--print("msgid", msgID)
-					if id ~= nil then
-						--print("id", id)
-						if msgID ~= nil then
-							--print("msgid", msgID)
-							api.editMessageText(id, msgID, text..'\nReport ID: '..repID, false, false)
-						end
+					if msgID ~= nil then
+						--print("msgid", msgID)
+						api.editMessageText(id, msgID, text..'\nReport ID: '..repID, false, false)
 					end
-
 				end
-				api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
-			elseif alreadyReported == '1' then
-				local solvedTime = db:hget(hash14, 'SolvedAt')
-				local solvedBy = db:hget(hash14, 'solvedBy')
-				api.answerCallbackQuery(msg.cb_id, 'This message was solved at '..solvedTime..' by '..solvedBy)
+
 			end
+			api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
+		elseif alreadyReported == '1' then
+			local solvedTime = db:hget(hash14, 'SolvedAt')
+			local solvedBy = db:hget(hash14, 'solvedBy')
+			api.answerCallbackQuery(msg.cb_id, 'This message was solved at '..solvedTime..' by '..solvedBy)
 		end
 	elseif blocks[1] == 'solved' then
 		--print("Second block"..blocks[2])
