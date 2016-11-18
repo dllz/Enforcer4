@@ -41,7 +41,7 @@ local function is_report_blocked(msg)
     return db:sismember(hash, msg.from.id)
 end
 
-local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg, reportid, username)
+local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_title, msg, reportid, username, message)
 	counter = 0
 	result = {}
 	adminID = {}
@@ -55,9 +55,17 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		local temp
 		--print("MOD ID:"..mods[i])
 		if username ~= nil then
-			temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
+			if message.reply then
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback = 'kickflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback = 'solveflag:'..message.chat.id..':'..reportid},{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
+			else
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback = 'solvedflag:'..message.chat.id..':'..reportid},{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}}, true)
+			end
 		else
-			temp, code = api.sendMessage(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved')
+			if message.reply then
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback = 'kickflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback = 'solveflag:'..message.chat.id..':'..reportid}}}}, true)
+			else
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback = 'solvedflag:'..message.chat.id..':'..reportid}}}}, true)
+			end
 		end
 		--print("CODE: ", code)
 		--print("DATADUMP:", dump(temp))
@@ -152,8 +160,7 @@ local action = function(msg, blocks, ln)
             send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID, username)
             api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
         end
-    end
-    if blocks[1] == 'report' then
+    elseif blocks[1] == 'report' then
         if is_mod(msg) then
             if not msg.reply then
                 api.sendReply(msg, lang[ln].flag.no_reply)
@@ -175,9 +182,62 @@ local action = function(msg, blocks, ln)
                 end
             end
         end
-	end
-		
-	if blocks[1] == 'solved' then
+	elseif blocks[1] == 'kickflag' then
+
+	elseif blocks[1] == 'solveflag' then
+		if is_mod(msg) then
+			local msg_id = blocks[3]
+			local chat = blocks[2]
+			print("Mesesage ID:", msg_id)
+			local hash12 = 'flagged:'..chat..':'..msg_id
+			local isSolved1 = db:hget(hash12, 'Solved')
+			--print("12213213")
+			local hash13 = 'flagged:'..chat..':'..msg_id+1
+			local isSolved2 = db:hget(hash13, 'Solved')
+			if isSolved1 then
+				hash14 = 'flagged:'..chat..':'..msg_id
+			elseif isSolved2 then
+				hash14 = 'flagged:'..chat..':'..msg_id+1
+			end
+
+			local alreadyReported = db:hget(hash14, 'Solved')
+			--print("Reprorteorijt", alreadyReported)
+			if alreadyReported == '0' then
+				local solvedBy = msg.from.first_name
+				if msg.from.username then solvedBy = solvedBy..' (@'..msg.from.username..')' end
+				local solvedAt = os.date('!%c (UCT)')
+
+				db:hset(hash14, 'SolvedAt', solvedAt)
+				db:hset(hash14, 'solvedBy', solvedBy)
+				db:hset(hash14, 'Solved', 1)
+				local counter = db:hget(hash14, '#Admin')
+				local reporter = db:hget(hash14, 'Reporter')
+				local repID = db:hget(hash14, 'repID')
+				--print("counter", counter)
+				local group = api.getChat(chat)
+				local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..group.title..')\nIt was reported by: '..reporter
+				for i=1, counter, 1 do
+					local id = db:hget(hash14, 'adminID'..i)
+					--print("id", id)
+					local msgID = db:hget(hash14, 'Message'..i)
+					--print("msgid", msgID)
+					if id ~= nil then
+						--print("id", id)
+						if msgID ~= nil then
+							--print("msgid", msgID)
+							api.editMessageText(id, msgID, text..'\nReport ID: '..repID, false, false)
+						end
+					end
+
+				end
+				api.sendReply(msg, 'Marked as solved')
+			elseif alreadyReported == '1' then
+				local solvedTime = db:hget(hash14, 'SolvedAt')
+				local solvedBy = db:hget(hash14, 'solvedBy')
+				api.sendReply(msg, 'This message was solved at '..solvedTime..' by '..solvedBy)
+			end
+		end
+	elseif blocks[1] == 'solved' then
 		--print("Second block"..blocks[2])
 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
@@ -299,9 +359,7 @@ local action = function(msg, blocks, ln)
 		else
 			api.sendReply(msg, lang[ln].not_mod)
 		end
-	end	
-	
-	if blocks[1] == 'msgid' then 
+	elseif blocks[1] == 'msgid' then
 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				api.sendReply(msg,'MessageID: '..msg.reply.message_id..' '..os.date('!%c (UCT)'))
@@ -320,6 +378,11 @@ return {
 		'^/(solved) (%d+)$',
 		'^/(solved)',
 		'^/(msgid)',
+
+		'^###cb:(banflag):(%d):(%d+)$',
+		'^###cb:(kickflag):(%d):(%d+)$',
+		'^###cb:(warnflag):(%d):(%d+)$',
+		'^###cb:(solveflag):(%d):(%d+)$',
 
         '^!(report) (on)$',
         '^!(report) (off)$',
