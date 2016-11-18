@@ -157,7 +157,7 @@ local action = function(msg, blocks, ln)
             local reporter = msg.from.first_name
             if msg.from.username then reporter = reporter..' (@'..msg.from.username..')' end
             local username = msg.chat.username
-            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID, username)
+            send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID, username, msg)
             api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
         end
     elseif blocks[1] == 'report' then
