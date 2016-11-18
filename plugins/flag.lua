@@ -134,13 +134,14 @@ local action = function(msg, blocks, ln)
 		--if 'report' is locked, if is a mod or if the user is blocked from using @admin
         if is_locked(msg, 'Report') or is_mod(msg) or is_report_blocked(msg) then
             return 
-        end
+		end
         if not blocks[2] and not msg.reply then
             api.sendReply(msg, lang[ln].flag.no_input)
         else
             if is_report_blocked(msg) then
                 return
-            end
+			end
+			if is_moduser(msg) then return end
             if msg.reply and ((tonumber(msg.reply.from.id) == tonumber(bot.id)) --[[or is_mod(msg.reply)]]) then
                 return
             end
