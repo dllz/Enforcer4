@@ -176,7 +176,7 @@ local action = function(msg, blocks, ln)
 				end
 				reason = db:hget('chat:'..msg.chat.id..':bannedlist:'..user_id, 'why')
 				if reason ~= nil then
-					name = name.." "..reason
+					name = name.."\n"..reason
 				end
 		 		local text = make_text(lang[ln].status[status], name)
 		 		api.sendReply(msg, text)
