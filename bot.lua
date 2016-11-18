@@ -182,7 +182,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 		else
 			if plugin.triggers then
 				if (config.testing_mode and plugin.test) or not plugin.test then --run test plugins only if test mode it's on
-				print(msg.text)
+				--print(msg.text)
 					for k,w in pairs(plugin.triggers) do
 						--print(w)
 						--print(k)
