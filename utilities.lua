@@ -73,15 +73,19 @@ function is_mod(msg)
 	end
 end
 function is_moduser(msg)
-	local res = api.getChatMember(msg.chat.id, msg.reply.from.id)
-	if not res then
-		return false, false
-	end
-	local status = res.result.status
-	if status == 'creator' or status == 'administrator' then
-		return true, true
+	if msg.reply.from then
+		local res = api.getChatMember(msg.chat.id, msg.reply.from.id)
+		if not res then
+			return false, false
+		end
+		local status = res.result.status
+		if status == 'creator' or status == 'administrator' then
+			return true, true
+		else
+			return false, true
+		end
 	else
-		return false, true
+		return false, false
 	end
 end
 
