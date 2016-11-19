@@ -125,93 +125,92 @@ local function match_pattern(pattern, text)
 end
 
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
-if msg.date < os.time() - 10 then return end -- PRocess last 30 minutes
-if not msg.text then msg.text = msg.caption or '' end
+	if msg.date < os.time() - 10 then return end -- PRocess last 30 minutes
+	if not msg.text then msg.text = msg.caption or '' end
 
-msg.normal_group = false
-if msg.chat.type == 'group' then msg.normal_group = true end
---Remove case sensitivity
-local tmp = string.match(msg.text, "^(/%a+)")
-if tmp ~= nil then
-	msg.text = tmp:lower() .. msg.text:sub(tmp:len() + 1)
-end
---Group language
-msg.lang = db:get('lang:'..msg.chat.id)
-if not msg.lang then
-	msg.lang = 'en'
-end
-
-collect_stats(msg) --resolve_username support, chat stats
-for i,plugin in pairs(plugins) do
-	local stop_loop
-	if plugin.on_each_msg then
-		print("on message "..last_update)
-		msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
+	msg.normal_group = false
+	if msg.chat.type == 'group' then msg.normal_group = true end
+	--Remove case sensitivity
+	local tmp = string.match(msg.text, "^(/%a+)")
+	if tmp ~= nil then
+		msg.text = tmp:lower() .. msg.text:sub(tmp:len() + 1)
 	end
-	if stop_loop then --check if on_each_msg said to stop the triggers loop
-	break
-	else
-		if plugin.triggers then
-			if (config.testing_mode and plugin.test) or not plugin.test then --run test plugins only if test mode it's on
-			--print(msg.text)
-			for k,w in pairs(plugin.triggers) do
-				--print(w)
-				--print(k)
-				local blocks = match_pattern(w, msg.text)
-				if blocks then
+	--Group language
+	msg.lang = db:get('lang:'..msg.chat.id)
+	if not msg.lang then
+		msg.lang = 'en'
+	end
 
+	collect_stats(msg) --resolve_username support, chat stats
+	for i,plugin in pairs(plugins) do
+		local stop_loop
+		if plugin.on_each_msg then
+			--print("on message "..last_update)
+			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
+		end
+		if stop_loop then --check if on_each_msg said to stop the triggers loop
+			break
+		else
+			if plugin.triggers then
+				--print(msg.text)
+				for k,w in pairs(plugin.triggers) do
+					--print(w)
 					--print(k)
+					local blocks = match_pattern(w, msg.text)
+					if blocks then
 
-					--workaround for the stupid bug
-					if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
-						cross.initGroup(msg.chat.id)
-					end
+						--print(k)
 
-					--print in the terminal
-					if msg.chat.type ~= "private" then
-						print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
-					else
-						print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
-					end
+						--workaround for the stupid bug
+						if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
+							cross.initGroup(msg.chat.id)
+						end
 
-					--print the match
-					if blocks[1] ~= '' then
-						db:hincrby('bot:general', 'query', 1)
-						if msg.from then db:incrby('user:'..msg.from.id..':query', 1) end
-					end
+						--print in the terminal
+						if msg.chat.type ~= "private" then
+							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
+						else
+							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
+						end
 
-					--print(111)
-					--execute the plugin
-					local success, result = pcall(function()
-						return plugin.action(msg, blocks, msg.lang)
-					end)
-					--print(success)
-					--print(result)
-					--if bugs
-					if not success then
-						print(msg.text, result)
-						api.sendReply(msg, '*This is a bug!*\nPlease report the problem with `"!<feedback>"` command :)', true)
-						save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
-						api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
-						return
-					end
+						--print the match
+						if blocks[1] ~= '' then
+							db:hincrby('bot:general', 'query', 1)
+							if msg.from then db:incrby('user:'..msg.from.id..':query', 1) end
+						end
 
-					-- If the action returns a table, make that table msg.
-					if type(result) == 'table' then
-						msg = result
-					elseif type(result) == 'string' then
-						msg.text = result
-						-- If the action returns true, don't stop.
-					elseif result ~= true then
-						return
+						--print(111)
+						--execute the plugin
+						local success, result = pcall(function()
+							return plugin.action(msg, blocks, msg.lang)
+						end)
+						--print(success)
+						--print(result)
+						--if bugs
+						if not success then
+							print(msg.text, result)
+							api.sendReply(msg, '*This is a bug!*\nPlease report the problem with `"!<feedback>"` command :)', true)
+							save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
+							api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
+							return
+						end
+
+						-- If the action returns a table, make that table msg.
+						if type(result) == 'table' then
+							msg = result
+						elseif type(result) == 'string' then
+							msg.text = result
+							-- If the action returns true, don't stop.
+						elseif result ~= true then
+							return
+						end
 					end
 				end
-			end
 			end
 		end
 	end
 end
-end
+
 
 local function service_to_message(msg)
 	msg.service = true
