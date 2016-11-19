@@ -473,19 +473,19 @@ return {
 	    '^@(admin) (.*)$',
 	    '^/(report) (on)$',
 	    '^/(report) (off)$',
-		'^/(solved) (%d+)$',
-		'^/(solved)',
+		--'^/(solved) (%d+)$',
+		--'^/(solved)',
 		'^/(msgid)',
 
 		'^###cb:(banflag):(-%d+):(%d+)',
 		'^###cb:(kickflag):(-%d+):(%d+)',
 		'^###cb:(warnflag):(-%d+):(%d+)',
-		'^###cb:(solveflag):(-%d+):(%d+)',
+		--'^###cb:(solveflag):(-%d+):(%d+)',
 
         '^!(report) (on)$',
         '^!(report) (off)$',
         '^!(solved) (%d+)$',
-        '^!(solved)',
+        --'^!(solved)',
         '^!(msgid)',
     }
 }
