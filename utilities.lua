@@ -72,6 +72,23 @@ function is_mod(msg)
 		return false, true
 	end
 end
+function is_moduser(msg)
+	if msg.reply ~= nil then
+		local res = api.getChatMember(msg.chat.id, msg.reply.from.id)
+		if not res then
+			return false, false
+		end
+		local status = res.result.status
+		if status == 'creator' or status == 'administrator' then
+			return true, true
+		else
+			return false, true
+		end
+	else
+		return false, false
+	end
+end
+
 
 function is_mod2(chat_id, user_id)
 	local res = api.getChatMember(chat_id, user_id)
