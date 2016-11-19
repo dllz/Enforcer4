@@ -131,7 +131,7 @@ local action = function(msg, blocks, ln)
     	local no_usernames
     	local send_reply = true
     	if is_locked(msg, 'Modlist') then
-    		if msg.fromadmin then
+    		if is_mod(msg) then
         		no_usernames = true
         	else
         		no_usernames = false
@@ -153,7 +153,7 @@ local action = function(msg, blocks, ln)
         end
     elseif blocks[1] == 'status' then
     	if msg.chat.type == 'private' then return end
-    	if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+    	if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
     		local user_id
     		if blocks[2]:match('%d+$') then
     			user_id = blocks[2]
@@ -183,7 +183,7 @@ local action = function(msg, blocks, ln)
 		 	end
 	 	end
  	elseif blocks[1] == 'id' then
- 		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+ 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			local id
 			local user = ''
 			if msg.reply then
@@ -229,7 +229,7 @@ local action = function(msg, blocks, ln)
         api.sendReply(msg, message, true)
     elseif blocks[1] == 'welcome' then
         
-        if msg.chat.type == 'private' or not msg.fromadmin then return end
+        if msg.chat.type == 'private' or not is_mod(msg) then return end
         
         local input = blocks[2]
     
@@ -423,7 +423,7 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'user' then
 		if msg.chat.type == 'private' then return end
-		if not msg.fromadmin then
+		if not is_mod(msg) then
 			if msg.cb then
 				api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
 			end
@@ -475,7 +475,7 @@ local action = function(msg, blocks, ln)
 		end
 		
 	elseif blocks[1] == 'banuser' then
-		if not msg.fromadmin then
+		if not is_mod(msg) then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     		return
 		end
@@ -489,7 +489,7 @@ local action = function(msg, blocks, ln)
 		end
 		api.editMessageText(msg.chat.id, msg.message_id, text, false, true)
 	elseif blocks[1] == 'remwarns' then
-		if not msg.fromadmin then
+		if not is_mod(msg) then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     		return
 		end
@@ -498,7 +498,7 @@ local action = function(msg, blocks, ln)
         
         api.editMessageText(msg.chat.id, msg.message_id, lang[ln].warn.nowarn..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
     elseif blocks[1] == 'ping' then
-		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.old_date))..'\nTime to process '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
+		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
 	elseif blocks[1] == 'enforce' then
 		api.sendReply(msg, '/ me now')
 	end
