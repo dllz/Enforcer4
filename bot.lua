@@ -164,9 +164,9 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 
 						--print in the terminal
 						if msg.chat.type ~= "private" then
-							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
+							print(clr.reset..clr.blue..'['..os.date('%X')..'] (Ping: '..os.date("%M:%S", (os.time() - msg.date))..')'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
 						else
-							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
+							print(clr.reset..clr.blue..'['..os.date('%X')..'] (Ping: '..os.date("%M:%S", (os.time() - msg.date))..')'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
 						end
 
 						--print(111)
