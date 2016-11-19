@@ -469,8 +469,8 @@ end
 return {
 	action = action,
 	triggers = {
-	    '^@(admin)$',
-	    '^@(admin) (.*)$',
+	    --'^@(admin)$',
+	   -- '^@(admin) (.*)$',
 	    '^/(report) (on)$',
 	    '^/(report) (off)$',
 		--'^/(solved) (%d+)$',
