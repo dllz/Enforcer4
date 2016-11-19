@@ -4,7 +4,7 @@ URL = require('socket.url')
 JSON = require('dkjson')
 redis = require('redis')
 package.path = package.path..';/root/torch/extra/threads/threads.lua'
-local threads = require 'threads'
+local threads = require ('threads')
 clr = require 'term.colors'
 db = Redis.connect('127.0.0.1', 6379)
 --db:select(0)
