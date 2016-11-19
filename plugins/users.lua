@@ -11,6 +11,7 @@ local function do_keybaord_credits()
 end
 
 local function get_user_id(msg, blocks)
+
 	if msg.target_id then
 		return msg.target_id
 	elseif msg.reply then
@@ -106,7 +107,22 @@ local function get_userinfo(user_id, chat_id, ln)
 end
 
 local action = function(msg, blocks, ln)
-    if blocks[1] == 'adminlist' then
+	if blocks[1] == 's' then
+		if msg.chat.type == 'private' then return end
+		if msg.reply then
+			local messageid = msg.reply.message_id
+			local saveTo = msg.from.id
+			local chat = msg.chat.id
+			local res, code = api.forwardMessage(saveTo, chat, messageid)
+			if code == 403 then
+				api.sendReply(msg, "Please start @werewolfbutlerbot.")
+			else
+				api.sendReply(msg, 'Message saved')
+			end
+		else
+			api.sendReply(msg, "Please reply to a message to save it")
+		end
+    elseif blocks[1] == 'adminlist' then
     	if msg.chat.type == 'private' then return end
     	local no_usernames
     	local send_reply = true
@@ -426,6 +442,26 @@ local action = function(msg, blocks, ln)
 		else
 			api.sendKeyboard(msg.chat.id, text, keyboard, true)
 		end
+	elseif blocks[1] == 'me' then
+		local chat_id = msg.chat.id
+		local chat_name = ''
+		if msg.chat.type == 'private' then
+			chat_id = nil
+		else
+			chat_name = msg.chat.title:mEscape()
+		end
+		local user_id = msg.from.id
+
+		local text = get_userinfo(user_id, chat_id, chat_name, ln)
+
+		local res, code = api.sendMessage(user_id, text, true)
+		if msg.chat.type ~= 'private' then
+			if code == 403 then
+				api.sendReply(msg, lang[ln].bonus.msg_me, true)
+			else
+				api.sendReply(msg, lang[ln].bonus.general_pm, true)
+			end
+		end
 	elseif blocks[1] == 'banuser' then
 		if not is_mod(msg) then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
@@ -473,6 +509,8 @@ return {
         '^/(user) (@[%w_]+)$',
 		'^/(user) (%d+)$',
 		'^/(ping)$',
+		'^/(s)$',
+		'^/(me)$',
 		
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
