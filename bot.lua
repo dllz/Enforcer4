@@ -125,7 +125,6 @@ local function match_pattern(pattern, text)
 end
 
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
-	if msg.date < os.time() - 10 then return end -- PRocess last 30 minutes
 	if not msg.text then msg.text = msg.caption or '' end
 
 	msg.normal_group = false
@@ -144,10 +143,10 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	collect_stats(msg) --resolve_username support, chat stats
 	for i,plugin in pairs(plugins) do
 		local stop_loop
-		--if plugin.on_each_msg then
-			--print("on message "..last_update)
-		--	msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
-		--end
+		if plugin.on_each_msg then
+			print("on message "..last_update)
+			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
+		end
 		msg.fromadmin = is_mod(msg)
 		if stop_loop then --check if on_each_msg said to stop the triggers loop
 			break
