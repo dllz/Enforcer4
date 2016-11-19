@@ -125,12 +125,6 @@ local function match_pattern(pattern, text)
 end
 
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
---vardump(msg)
-if not msg then
-	api.sendAdmin('A loop without msg!')
-	return
-end
-
 if msg.date < os.time() - 10 then return end -- PRocess last 30 minutes
 if not msg.text then msg.text = msg.caption or '' end
 
