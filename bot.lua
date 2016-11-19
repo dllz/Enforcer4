@@ -304,14 +304,10 @@ while is_started do -- Start a loop while the bot should be running.
 		--vardump(res)
 		for i,msg in ipairs(res.result) do -- Go through every new message.
 			last_update = msg.update_id
-			db:set('bot:last_update', last_update)
 			current_m = current_m + 1
 			if msg.message  or msg.callback_query --[[or msg.edited_message]] then
-				--[[if msg.edited_message then
-					msg.message = msg.edited_message
-					msg.edited_message = nil
-				end]]
-				--if msg.message.date < os.time() - 15 then
+				if msg.message.date < os.time() - 15 then
+					db:set('bot:last_update', last_update)
 					if msg.callback_query then
 						handle_inline_keyboards_cb(msg.callback_query)
 					elseif msg.message.migrate_to_chat_id then
@@ -327,7 +323,7 @@ while is_started do -- Start a loop while the bot should be running.
 					else
 						on_msg_receive(msg.message)
 					end
-				--end
+				end
 			end
 		end
 	else
