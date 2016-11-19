@@ -95,24 +95,6 @@ local function get_what(msg)
 end
 
 local function collect_stats(msg)
-
-	--count the number of messages
-	db:hincrby('bot:general', 'messages', 1)
-
-	--for resolve username
-	if msg.from and msg.from.username then
-		db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
-		db:hset('bot:ids', msg.from.id, '@'..msg.from.username)
-		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.from.username:lower(), msg.from.id)
-		if msg.from.id == 262106974 then
-			api.sendAdmin( "This message was sent because this bot saw "..msg.from.id.." "..msg.from.username.." thus proving that Pierre is a retard and owes me $50 for wasting my time")
-			api.print("Pierre has been seen")
-			if os.time() > 1509128111 then
-				api.sendMessage(msg.chat.id, "Hello Pierre I have been waiting for you, for a very long time. Its time to play a game, you can begin by giving me my $50")
-				api.sendAdmin("It has begun...pierres bot triggered it")
-			end
-		end
-	end
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 		db:hset('bot:ids', msg.forward_from.id, '@'..msg.forward_from.username)
