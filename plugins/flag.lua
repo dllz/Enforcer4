@@ -119,7 +119,7 @@ local action = function(msg, blocks, ln)
 	if blocks[1] == 'admin' then
 		--return
 		--if 'report' is locked, if is a mod or if the user is blocked from using @admin
-		if is_locked(msg, 'Report') or msg.fromadmin or is_report_blocked(msg) then
+		if is_locked(msg, 'Report') or is_mod(msg) or is_report_blocked(msg) then
 			return
 		end
 		if not blocks[2] and not msg.reply then
@@ -150,7 +150,7 @@ local action = function(msg, blocks, ln)
 			api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
 		end
 	elseif blocks[1] == 'report' then
-		if msg.fromadmin then
+		if is_mod(msg) then
 			if not msg.reply then
 				api.sendReply(msg, lang[ln].flag.no_reply)
 			else
@@ -324,7 +324,7 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'solved' then
 		--print("Second block"..blocks[2])
-		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				local msg_id = msg.reply.message_id
 				print("Mesesage ID:", msg_id)
@@ -445,7 +445,7 @@ local action = function(msg, blocks, ln)
 			api.sendReply(msg, lang[ln].not_mod)
 		end
 	elseif blocks[1] == 'msgid' then
-		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			if msg.reply then
 				api.sendReply(msg,'MessageID: '..msg.reply.message_id..' '..os.date('!%c (UCT)'))
 			end
