@@ -144,7 +144,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	for i,plugin in pairs(plugins) do
 		local stop_loop
 		if plugin.on_each_msg then
-			print("on message "..last_update)
+			--print("on message "..last_update)
 			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
 		end
 		if stop_loop then --check if on_each_msg said to stop the triggers loop
