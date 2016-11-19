@@ -131,7 +131,7 @@ local action = function(msg, blocks, ln)
     	local no_usernames
     	local send_reply = true
     	if is_locked(msg, 'Modlist') then
-    		if is_mod(msg) then
+    		if msg.fromadmin then
         		no_usernames = true
         	else
         		no_usernames = false
@@ -153,7 +153,7 @@ local action = function(msg, blocks, ln)
         end
     elseif blocks[1] == 'status' then
     	if msg.chat.type == 'private' then return end
-    	if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
+    	if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
     		local user_id
     		if blocks[2]:match('%d+$') then
     			user_id = blocks[2]
@@ -183,7 +183,7 @@ local action = function(msg, blocks, ln)
 		 	end
 	 	end
  	elseif blocks[1] == 'id' then
- 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
+ 		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
 			local id
 			local user = ''
 			if msg.reply then
@@ -229,7 +229,7 @@ local action = function(msg, blocks, ln)
         api.sendReply(msg, message, true)
     elseif blocks[1] == 'welcome' then
         
-        if msg.chat.type == 'private' or not is_mod(msg) then return end
+        if msg.chat.type == 'private' or not msg.fromadmin then return end
         
         local input = blocks[2]
     
@@ -423,7 +423,7 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'user' then
 		if msg.chat.type == 'private' then return end
-		if not is_mod(msg) then
+		if not msg.fromadmin then
 			if msg.cb then
 				api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
 			end
@@ -475,7 +475,7 @@ local action = function(msg, blocks, ln)
 		end
 		
 	elseif blocks[1] == 'banuser' then
-		if not is_mod(msg) then
+		if not msg.fromadmin then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     		return
 		end
@@ -489,7 +489,7 @@ local action = function(msg, blocks, ln)
 		end
 		api.editMessageText(msg.chat.id, msg.message_id, text, false, true)
 	elseif blocks[1] == 'remwarns' then
-		if not is_mod(msg) then
+		if not msg.fromadmin then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     		return
 		end

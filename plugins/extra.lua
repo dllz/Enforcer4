@@ -3,7 +3,7 @@ local action = function(msg, blocks, ln)
 	if msg.chat.type == 'private' then return end
 	
 	if blocks[1] == 'extra' then
-		if not is_mod(msg) then return end
+		if not msg.fromadmin then return end
 		if not blocks[2] then return end
 		if not blocks[3] and not msg.reply then return end
 		
@@ -60,7 +60,7 @@ local action = function(msg, blocks, ln)
     		end
     	end
 	elseif blocks[1] == 'extra list' then
-	    if not is_mod(msg) then return end
+	    if not msg.fromadmin then return end
 	    
 	    local hash = 'chat:'..msg.chat.id..':extra'
 	    local commands = db:hkeys(hash)
@@ -75,7 +75,7 @@ local action = function(msg, blocks, ln)
 	        api.sendReply(msg, out, true)
 	    end
     elseif blocks[1] == 'extra del' then
-        if not is_mod(msg) then return end
+        if not msg.fromadmin then return end
 	    
 	    local hash = 'chat:'..msg.chat.id..':extra'
 	    local success = db:hdel(hash, blocks[2])
@@ -93,7 +93,7 @@ local action = function(msg, blocks, ln)
         local file_id = text:match('^###.+###:(.*)')
 		local hasMedia = db:hget(hash..':'..blocks[1], 'mediaid')
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
-        if is_locked(msg, 'Extra') and not is_mod(msg) then --send it in private
+        if is_locked(msg, 'Extra') and not msg.fromadmin then --send it in private
         	if not file_id or not hasMedia then
             	api.sendMessage(msg.from.id, text, true, nil, true)
             else

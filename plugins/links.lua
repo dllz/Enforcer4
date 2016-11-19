@@ -18,7 +18,7 @@ local action = function(msg, blocks, ln)
 		end
 		api.sendReply(msg, text, true)
 	end
-	if not is_mod(msg) then return end
+	if not msg.fromadmin then return end
 	if blocks[1] == 'setlink' then
 		
 		local link

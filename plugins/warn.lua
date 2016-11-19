@@ -24,7 +24,7 @@ local function action(msg, blocks, ln)
     --warns/mediawarn
     
     if msg.chat.type == 'private' then return end
-    if not is_mod(msg) then
+    if not msg.fromadmin then
     	if msg.cb then --show a pop up if a normal user tap on an inline button
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     	end
