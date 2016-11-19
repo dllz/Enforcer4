@@ -11,15 +11,14 @@ local function do_keybaord_credits()
 end
 
 local function get_user_id(msg, blocks)
-
 	if msg.target_id then
 		return msg.target_id
 	elseif msg.reply then
 		return msg.reply.from.id
-    elseif msg.entities then --this elseif is a test.
-        for i,entity in ipairs(msg.entities) do
-            if entity.type == "text_mention" then return entity.user.id end
-        end
+	elseif msg.entities then --this elseif is a test.
+	for i,entity in ipairs(msg.entities) do
+		if entity.type == "text_mention" then return entity.user.id end
+	end
 	elseif blocks[2] then
 		if blocks[2]:match('@[%w_]+') then
 			local user_id = res_user_group(blocks[2], msg.chat.id)
@@ -44,37 +43,41 @@ local function get_name_getban(msg, blocks, user_id)
 	end
 end
 
-local function get_ban_info(user_id, chat_id, ln)
+local function get_ban_info(user_id, chat_id, title, ln)
 	local hash = 'ban:'..user_id
 	local ban_info = db:hgetall(hash)
 	--if not next(ban_info) then
 	--	return lang[ln].getban.nothing
 	--else
-		local ban_index = {
-			['kick'] = lang[ln].getban.kick,
-			['ban'] = lang[ln].getban.ban,
-			['tempban'] = lang[ln].getban.tempban,
-			['flood'] = lang[ln].getban.flood,
-			['media'] = lang[ln].getban.media,
-			['warn'] = lang[ln].getban.warn,
-			['arab'] = lang[ln].getban.arab,
-			['rtl'] = lang[ln].getban.rtl,
-		}
-		local text = ''
-		for type,n in pairs(ban_info) do
-			text = text..'`'..ban_index[type]..'`'..'*'..n..'*\n'
+	local ban_index = {
+		['kick'] = lang[ln].getban.kick,
+		['ban'] = lang[ln].getban.ban,
+		['tempban'] = lang[ln].getban.tempban,
+		['flood'] = lang[ln].getban.flood,
+		['media'] = lang[ln].getban.media,
+		['warn'] = lang[ln].getban.warn,
+		['arab'] = lang[ln].getban.arab,
+		['rtl'] = lang[ln].getban.rtl,
+	}
+	local text = ''
+	for type,n in pairs(ban_info) do
+		text = text..'`'..ban_index[type]..'`'..'*'..n..'*\n'
+	end
+	--if text == '' then
+	--	return lang[ln].getban.nothing
+	--else
+	if chat_id ~= nil then
+		local warns = (db:hget('chat:'..chat_id..':warns', user_id)) or 0
+		local media_warns = (db:hget('chat:'..chat_id..':mediawarn', user_id)) or 0
+		if title ~= nil then
+			text = text..'\n*Info for group '..title..'*:'
 		end
-		--if text == '' then
-		--	return lang[ln].getban.nothing
-		--else
-			local warns = (db:hget('chat:'..chat_id..':warns', user_id)) or 0
-			local media_warns = (db:hget('chat:'..chat_id..':mediawarn', user_id)) or 0
-			text = text..'\n`Warns`: '..warns..'\n`Media warns`: '..media_warns
-			return text
-		--end
+		text = text..'\n`Warns`: '..warns..'\n`Media warns`: '..media_warns
+	end
+	return text
+	--end
 	--end
 end
-
 local function do_keyboard_userinfo(user_id, ln)
 	local keyboard = {
 		inline_keyboard = {
@@ -102,8 +105,8 @@ local function check_reply(msg)
 	end
 end
 
-local function get_userinfo(user_id, chat_id, ln)
-	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, ln)
+local function get_userinfo(user_id, chat_id, title, ln)
+	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, title, ln)
 end
 
 local action = function(msg, blocks, ln)
