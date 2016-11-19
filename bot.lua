@@ -306,7 +306,7 @@ while is_started do -- Start a loop while the bot should be running.
 			last_update = msg.update_id
 			current_m = current_m + 1
 			if msg.message  or msg.callback_query --[[or msg.edited_message]] then
-				if msg.message.date < os.time() - 15 then
+				if msg.message.date > os.time() - 15 then
 					db:set('bot:last_update', last_update)
 					if msg.callback_query then
 						handle_inline_keyboards_cb(msg.callback_query)
