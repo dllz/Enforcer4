@@ -158,9 +158,6 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 					--print(k)
 					local blocks = match_pattern(w, msg.text)
 					if blocks then
-
-						--print(k)
-
 						--workaround for the stupid bug
 						if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
 							cross.initGroup(msg.chat.id)
@@ -171,12 +168,6 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
 						else
 							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
-						end
-
-						--print the match
-						if blocks[1] ~= '' then
-							db:hincrby('bot:general', 'query', 1)
-							if msg.from then db:incrby('user:'..msg.from.id..':query', 1) end
 						end
 
 						--print(111)
@@ -194,16 +185,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 							api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
 							return
 						end
-
-						-- If the action returns a table, make that table msg.
-						if type(result) == 'table' then
-							msg = result
-						elseif type(result) == 'string' then
-							msg.text = result
-							-- If the action returns true, don't stop.
-						elseif result ~= true then
-							return
-						end
+						return
 					end
 				end
 			end
@@ -318,36 +300,36 @@ end
 bot_init() -- Actually start the script. Run the bot_init function.
 
 while is_started do -- Start a loop while the bot should be running.
-local res = api.getUpdates(last_update+1) -- Get the latest updates!
-if res and res.result  then
-	--vardump(res)
-	for i,msg in ipairs(res.result) do -- Go through every new message.
-	last_update = msg.update_id
-	db:set('bot:last_update', last_update)
-	current_m = current_m + 1
-	if msg.message  or msg.callback_query --[[or msg.edited_message]]then
-		--[[if msg.edited_message then
-            msg.message = msg.edited_message
-            msg.edited_message = nil
-        end]]
-		if msg.callback_query then
-			handle_inline_keyboards_cb(msg.callback_query)
-		elseif msg.message.migrate_to_chat_id then
-			to_supergroup(msg.message)
-		elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
-			service_to_message(msg.message)
-		elseif msg.message.photo or msg.message.video or msg.message.document or msg.message.voice or msg.message.audio or msg.message.sticker or msg.message.entities then
-			media_to_msg(msg.message)
-		elseif msg.message.forward_from then
-			forward_to_msg(msg.message)
-		elseif msg.message.reply_to_message then
-			rethink_reply(msg.message)
-		else
-			on_msg_receive(msg.message)
+	local res = api.getUpdates(last_update+1) -- Get the latest updates!
+	if res and res.result  then
+		--vardump(res)
+		for i,msg in ipairs(res.result) do -- Go through every new message.
+			last_update = msg.update_id
+			db:set('bot:last_update', last_update)
+			current_m = current_m + 1
+			if msg.message  or msg.callback_query --[[or msg.edited_message]]then
+				--[[if msg.edited_message then
+					msg.message = msg.edited_message
+					msg.edited_message = nil
+				end]]
+				if msg.callback_query then
+					handle_inline_keyboards_cb(msg.callback_query)
+				elseif msg.message.migrate_to_chat_id then
+					to_supergroup(msg.message)
+				elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
+					service_to_message(msg.message)
+				elseif msg.message.photo or msg.message.video or msg.message.document or msg.message.voice or msg.message.audio or msg.message.sticker or msg.message.entities then
+					media_to_msg(msg.message)
+				elseif msg.message.forward_from then
+					forward_to_msg(msg.message)
+				elseif msg.message.reply_to_message then
+					rethink_reply(msg.message)
+				else
+					on_msg_receive(msg.message)
+				end
+			end
 		end
-	end
-	end
-else
+	else
 	print('Connection error')
 end
 if last_cron ~= os.date('%M') then -- Run cron jobs every minute.
