@@ -77,7 +77,7 @@ end
 
 local function getUpdates(offset)
 
-	local url = BASE_URL .. '/getUpdates?timeout=20'
+	local url = BASE_URL .. '/getUpdates?timeout=60'
 
 	if offset then
 		url = url .. '&offset=' .. offset
