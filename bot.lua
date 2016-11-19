@@ -1,3 +1,4 @@
+package.path = package.path..';/usr/local/lib/lua/5.2/'
 HTTPS = require('ssl.https')
 URL = require('socket.url')
 JSON = require('dkjson')
