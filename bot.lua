@@ -147,7 +147,6 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 			print("on message "..last_update)
 			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
 		end
-		msg.fromadmin = is_mod(msg)
 		if stop_loop then --check if on_each_msg said to stop the triggers loop
 			break
 		else
