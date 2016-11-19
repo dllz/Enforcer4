@@ -1,6 +1,6 @@
-package.path = package.path..';/usr/local/share/lua/5.2;'
-HTTPS = require('ssl.https')
-URL = require('socket.url')
+package.path = package.path..';/usr/local/share/lua/5.2/ssl/https;/usr/local/share/lua/5.2/socket/url;/usr/local/share/lua/5.2/dkjson;/usr/local/share/lua/5.2/redis'
+HTTPS = require('https')
+URL = require('url')
 JSON = require('dkjson')
 redis = require('redis')
 clr = require 'term.colors'
