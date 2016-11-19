@@ -306,6 +306,7 @@ bot_init() -- Actually start the script. Run the bot_init function.
 
 while is_started do -- Start a loop while the bot should be running.
 	local res = api.getUpdates(last_update+1) -- Get the latest updates!
+	print("got update")
 	if res and res.result  then
 		--vardump(res)
 		for i,msg in ipairs(res.result) do -- Go through every new message.
