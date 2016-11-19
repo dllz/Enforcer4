@@ -130,12 +130,6 @@ if not msg.text then msg.text = msg.caption or '' end
 
 msg.normal_group = false
 if msg.chat.type == 'group' then msg.normal_group = true end
-
---for commands link
---[[if msg.text:match('^/start .+') then
-    msg.text = '/' .. msg.text:input()
-end]]
-
 --Remove case sensitivity
 local tmp = string.match(msg.text, "^(/%a+)")
 if tmp ~= nil then
@@ -151,6 +145,7 @@ collect_stats(msg) --resolve_username support, chat stats
 for i,plugin in pairs(plugins) do
 	local stop_loop
 	if plugin.on_each_msg then
+		print("on message "..last_update)
 		msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
 	end
 	if stop_loop then --check if on_each_msg said to stop the triggers loop
