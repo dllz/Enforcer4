@@ -498,7 +498,7 @@ local action = function(msg, blocks, ln)
         
         api.editMessageText(msg.chat.id, msg.message_id, lang[ln].warn.nowarn..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
     elseif blocks[1] == 'ping' then
-		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
+		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.old_date))..'\nTime to process '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
 	elseif blocks[1] == 'enforce' then
 		api.sendReply(msg, '/ me now')
 	end
