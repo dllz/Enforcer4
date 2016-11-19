@@ -306,7 +306,7 @@ while is_started do -- Start a loop while the bot should be running.
 			last_update = msg.update_id
 			current_m = current_m + 1
 			if msg.message --[[or msg.edited_message]] then
-				if msg.message.date > os.time() - 5 then
+				if msg.message.date > os.time() - 2 then
 					db:set('bot:last_update', last_update)
 					if msg.message.migrate_to_chat_id then
 						to_supergroup(msg.message)
