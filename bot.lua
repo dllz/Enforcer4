@@ -129,7 +129,7 @@ end
 
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	if not msg.text then msg.text = msg.caption or '' end
-	
+if msg.date < os.time() - 10 then return end
 	msg.normal_group = false
 	if msg.chat.type == 'group' then msg.normal_group = true end
 	
@@ -316,7 +316,7 @@ while is_started do -- Start a loop while the bot should be running.
 					msg.message = msg.edited_message
 					msg.edited_message = nil
 				end]]
-				if msg.date < os.time() - 10 then return end --ignore old messages
+				--ignore old messages
 				if msg.callback_query then
 					handle_inline_keyboards_cb(msg.callback_query)
 				elseif msg.message.migrate_to_chat_id then
