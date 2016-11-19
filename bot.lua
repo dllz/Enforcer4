@@ -3,10 +3,32 @@ HTTPS = require('ssl.https')
 URL = require('socket.url')
 JSON = require('dkjson')
 redis = require('redis')
+local threads = require 'threads'
 clr = require 'term.colors'
 db = Redis.connect('127.0.0.1', 6379)
 --db:select(0)
 serpent = require('serpent')
+
+local nthread = 250
+
+local pool = threads.Threads(
+    nthread,
+    function(threadid)
+        print('starting a new thread/state number ' .. threadid)
+    end
+)
+
+local result -- DO NOT put this in get
+local success -- DO NOT put this in get
+local function handleMessage(msg, blocks)
+    if pool:acceptsjob() then
+        pool:addjob(
+            function()
+                return plugin.action(msg, blocks, msg.lang)
+            end
+        )
+    end
+end
 
 
 bot_init = function(on_reload) -- The function run when the bot is started or reloaded.
@@ -211,27 +233,29 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 							
 							--print(111)
 							--execute the plugin
-							local success, result = pcall(function()
-								return plugin.action(msg, blocks, msg.lang)
-							end)
+							--local success, result = pcall(function()
+							--	return plugin.action(msg, blocks, msg.lang)
+							--end)
+
 							--print(success)
 							--print(result)
 							--if bugs
-							if not success then
-								print(msg.text, result)
+                            local suc, res = handleMessage(msg, blocks)
+							if not suc then
+								print(msg.text, res)
 								api.sendReply(msg, '*This is a bug!*\nPlease report the problem with `"!<feedback>"` command :)', true)
-								save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
-          						api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
+								save_log('errors', res, msg.from.id or false, msg.chat.id or false, msg.text or false)
+          						api.sendAdmin('An #error occurred.\n'..res..'\n'..msg.lang..'\n'..msg.text)
 								return
 							end
 							
 							-- If the action returns a table, make that table msg.
-							if type(result) == 'table' then
-								msg = result
-							elseif type(result) == 'string' then
-								msg.text = result
+							if type(res) == 'table' then
+								msg = res
+							elseif type(res) == 'string' then
+								msg.text = res
 							-- If the action returns true, don't stop.
-							elseif result ~= true then
+							elseif res ~= true then
 								return
 							end
 						end
