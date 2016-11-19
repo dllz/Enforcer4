@@ -58,6 +58,7 @@ pre_process = function(msg, ln)
 						if msg.chat.type == 'group' then is_normal_group = true end
 						res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, ln)
 					else
+						print("Kicking at msg > max "..msg.update_id)
 						res = api.kickUser(msg.chat.id, msg.from.id, ln)
 					end
 					--if kicked/banned, send a message
@@ -98,6 +99,7 @@ pre_process = function(msg, ln)
 				if max_reached_var then --max num reached. Kick/ban the user
 					--try to kick/ban
 					if status == 'kick' then
+						print("Kicking at msg.media "..msg.update_id)
 						res = api.kickUser(msg.chat.id, msg.from.id, ln)
 					elseif status == 'ban' then
 						if msg.chat.type == 'group' then is_normal_group = true end
@@ -136,6 +138,7 @@ pre_process = function(msg, ln)
 			if check ~= nil then
 				local res
 				if rtl_status == 'kick' then
+					print("Kicking at rtl "..msg.update_id)
 					res = api.kickUser(msg.chat.id, msg.from.id, ln)
 				elseif status == 'ban' then
 					res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
@@ -162,6 +165,7 @@ pre_process = function(msg, ln)
 				if msg.from.username then name = name..' (@'..msg.from.username..')' end
 				local res
 				if arab_status == 'kick' then
+					print("Kicking at arab "..msg.update_id)
 					res = api.kickUser(msg.chat.id, msg.from.id, ln)
 				elseif arab_status == 'ban' then
 					res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
