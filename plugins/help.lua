@@ -178,9 +178,6 @@ return {
 	triggers = {
 	    '^/(start)$',
 	    '^/(help)$',
-
-        '^!(start)$',
-        '^!(help)$',
 	    '^###cb:!(user)',
 	    '^###cb:!(info_button)',
 	    '^###cb:!(mod)',

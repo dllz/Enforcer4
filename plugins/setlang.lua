@@ -10,7 +10,7 @@ local function doKeyboard_lang()
 end
 
 local action = function(msg, blocks, ln)
-	if msg.chat.type ~= 'private' and not msg.fromadmin then
+	if msg.chat.type ~= 'private' and not is_mod(msg) then
 		if msg.cb then
 			api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
     	end
@@ -35,7 +35,6 @@ return {
 	action = action,
 	triggers = {
 		'^/(lang)$',
-		'^###cb:(langselected):(%a%a)$',
-		'^!(lang)$',
+		'^###cb:(langselected):(%a%a)$'
 	}
 }

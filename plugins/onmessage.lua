@@ -27,7 +27,7 @@ local function is_blocked(id)
 end
 
 pre_process = function(msg, ln)
-    msg.fromadmin = is_mod(msg)
+    
     local msg_type = 'text'
     if msg.media then msg_type = msg.text:gsub('###', '') end
     if not is_ignored(msg.chat.id, msg_type) then
@@ -39,43 +39,37 @@ pre_process = function(msg, ln)
         local max_msgs = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or default_spam_value
         if msg.cb then max_msgs = 15 end
         local max_time = 5
-        if (os.time() - msg.date) < 60 then
-			db:setex(spamhash, max_time, msgs+1)
-		end
-        if msgs == max_msgs+1 then
-			if msg.fromadmin then
-			else
-				local status = db:hget('chat:'..msg.chat.id..':settings', 'Flood') or 'yes'
-				--how flood on/off works: yes->yes, antiflood is diabled. no->no, anti flood is not disbaled
-				if status == 'no' and not msg.cb then
-					local action = db:hget('chat:'..msg.chat.id..':flood', 'ActionFlood')
-					local name = msg.from.first_name
-					if msg.from.username then name = name..' (@'..msg.from.username..')' end
-					local is_normal_group = false
-					local res, message
-					--try to kick or ban
-					if action == 'ban' then
-						if msg.chat.type == 'group' then is_normal_group = true end
-						res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, ln)
-					else
-						print("Kicking at msg > max ")
-						res = api.kickUser(msg.chat.id, msg.from.id, ln)
-					end
-					--if kicked/banned, send a message
-					if res then
-						cross.saveBan(msg.from.id, 'flood') --save ban
-						if action == 'ban' then
-							cross.addBanList(msg.chat.id, msg.from.id, name, lang[ln].preprocess.flood_motivation)
-							message = make_text(lang[ln].preprocess.flood_ban, name:mEscape())
-						else
-							message = make_text(lang[ln].preprocess.flood_kick, name:mEscape())
-						end
-						if msgs == (max_msgs + 1) or msgs == max_msgs + 5 then --send the message only if it's the message after the first message flood. Repeat after 5
-							api.sendMessage(msg.chat.id, message, true)
-						end
-					end
-				end
-			end
+        db:setex(spamhash, max_time, msgs+1)
+        if msgs > max_msgs then
+            local status = db:hget('chat:'..msg.chat.id..':settings', 'Flood') or 'yes'
+            --how flood on/off works: yes->yes, antiflood is diabled. no->no, anti flood is not disbaled
+            if status == 'no' and not msg.cb then
+                local action = db:hget('chat:'..msg.chat.id..':flood', 'ActionFlood')
+                local name = msg.from.first_name
+                if msg.from.username then name = name..' (@'..msg.from.username..')' end
+                local is_normal_group = false
+                local res, message
+                --try to kick or ban
+                if action == 'ban' then
+                    if msg.chat.type == 'group' then is_normal_group = true end
+        	        res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, ln)
+        	    else
+        	        res = api.kickUser(msg.chat.id, msg.from.id, ln)
+        	    end
+        	    --if kicked/banned, send a message
+        	    if res then
+        	        cross.saveBan(msg.from.id, 'flood') --save ban
+        	        if action == 'ban' then
+        	            cross.addBanList(msg.chat.id, msg.from.id, name, lang[ln].preprocess.flood_motivation)
+        	            message = make_text(lang[ln].preprocess.flood_ban, name:mEscape()) 
+        	        else
+        	            message = make_text(lang[ln].preprocess.flood_kick, name:mEscape())
+        	        end
+        	        if msgs == (max_msgs + 1) or msgs == max_msgs + 5 then --send the message only if it's the message after the first message flood. Repeat after 5
+        	            api.sendMessage(msg.chat.id, message, true)
+        	        end
+        	    end
+        	end
             
             if msg.cb then
                 api.answerCallbackQuery(msg.cb_id, "‼️ Please don't abuse the keyboard, requests will be ignored")
@@ -85,102 +79,91 @@ pre_process = function(msg, ln)
     end
     
     if msg.media and not(msg.chat.type == 'private') and not msg.cb then
-        if msg.fromadmin then
-		else
-			local name = msg.from.first_name
-			if msg.from.username then name = name..' (@'..msg.from.username..')' end
-			local media = msg.text:gsub('###', '')
-			if msg.url then media = 'link' end
-			local hash = 'chat:'..msg.chat.id..':media'
-			local status = db:hget(hash, media)
-			local out
-			if not(status == 'allowed') then
-				local max_reached_var, n, max = max_reached(msg.chat.id, msg.from.id)
-				if max_reached_var then --max num reached. Kick/ban the user
-					--try to kick/ban
-					if status == 'kick' then
-						print("Kicking at msg.media ")
-						res = api.kickUser(msg.chat.id, msg.from.id, ln)
-					elseif status == 'ban' then
-						if msg.chat.type == 'group' then is_normal_group = true end
-						res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, ln)
-					end
-					if res then --kick worked
-						cross.saveBan(msg.from.id, 'media') --save ban
-						db:hdel('chat:'..msg.chat.id..':mediawarn', msg.from.id) --remove media warns
-						local message
-						if status == 'ban' then
-							cross.addBanList(msg.chat.id, msg.from.id, name, lang[ln].preprocess.media_motivation)
-							message = make_text(lang[ln].preprocess.media_ban, name:mEscape())..'\n`('..n..'/'..max..')`'
-						else
-							message = make_text(lang[ln].preprocess.media_kick, name:mEscape())..'\n`('..n..'/'..max..')`'
-						end
-						api.sendMessage(msg.chat.id, message, true)
-					end
-				else --max num not reached -> warn
-					local message = lang[ln].preprocess.first_warn..'\n*('..n..'/'..max..')*'
-					api.sendReply(msg, message, true)
-				end
-			end
-		end
+        if is_mod(msg) then return msg end
+        local name = msg.from.first_name
+        if msg.from.username then name = name..' (@'..msg.from.username..')' end
+        local media = msg.text:gsub('###', '')
+        if msg.url then media = 'link' end
+        local hash = 'chat:'..msg.chat.id..':media'
+        local status = db:hget(hash, media)
+        local out
+        if not(status == 'allowed') then
+            local max_reached_var, n, max = max_reached(msg.chat.id, msg.from.id)
+    	    if max_reached_var then --max num reached. Kick/ban the user
+    	        --try to kick/ban
+    	        if status == 'kick' then
+                    res = api.kickUser(msg.chat.id, msg.from.id, ln)
+                elseif status == 'ban' then
+                    if msg.chat.type == 'group' then is_normal_group = true end
+                    res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, ln)
+    	        end
+    	        if res then --kick worked
+    	            cross.saveBan(msg.from.id, 'media') --save ban
+    	            db:hdel('chat:'..msg.chat.id..':mediawarn', msg.from.id) --remove media warns
+    	            local message
+    	            if status == 'ban' then
+    	                cross.addBanList(msg.chat.id, msg.from.id, name, lang[ln].preprocess.media_motivation)
+    	                message = make_text(lang[ln].preprocess.media_ban, name:mEscape())..'\n`('..n..'/'..max..')`'
+    	            else
+    	                message = make_text(lang[ln].preprocess.media_kick, name:mEscape())..'\n`('..n..'/'..max..')`'
+    	            end
+    	            api.sendMessage(msg.chat.id, message, true)
+    	        end
+	        else --max num not reached -> warn
+	            local message = lang[ln].preprocess.first_warn..'\n*('..n..'/'..max..')*'
+	            api.sendReply(msg, message, true)
+	        end
+    	end
     end
     
     local rtl_status = (db:hget('chat:'..msg.chat.id..':char', 'Rtl')) or 'allowed'
     if rtl_status == 'kick' or rtl_status == 'ban' then
-		if msg.fromadmin then
-		else
-			local name = msg.from.first_name
-			if msg.from.username then name = name..' (@'..msg.from.username..')' end
-			local rtl = '‮'
-			local last_name = 'x'
-			if msg.from.last_name then last_name = msg.from.last_name end
-			local check = msg.text:find(rtl..'+') or msg.from.first_name:find(rtl..'+') or last_name:find(rtl..'+')
-			if check ~= nil then
-				local res
-				if rtl_status == 'kick' then
-					print("Kicking at rtl ")
-					res = api.kickUser(msg.chat.id, msg.from.id, ln)
-				elseif status == 'ban' then
-					res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
-				end
-				if res then
-					cross.saveBan(msg.from.id, 'rtl') --save ban
-					local message = make_text(lang[ln].preprocess.rtl_kicked, name:mEscape())
-					if rtl_status == 'ban' then
-						cross.addBanList(msg.chat.id, msg.from.id, name, 'Rtl')
-						message = make_text(lang[ln].preprocess.rtl_banned, name:mEscape())
-					end
-					api.sendMessage(msg.chat.id, message, true)
-				end
-			end
-		end
+        local name = msg.from.first_name
+        if msg.from.username then name = name..' (@'..msg.from.username..')' end
+        local rtl = '‮'
+        local last_name = 'x'
+        if msg.from.last_name then last_name = msg.from.last_name end
+        local check = msg.text:find(rtl..'+') or msg.from.first_name:find(rtl..'+') or last_name:find(rtl..'+')
+        if check ~= nil then
+            local res
+            if rtl_status == 'kick' then
+                res = api.kickUser(msg.chat.id, msg.from.id, ln)
+            elseif status == 'ban' then
+                res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
+            end
+    	    if res then
+    	        cross.saveBan(msg.from.id, 'rtl') --save ban
+    	        local message = make_text(lang[ln].preprocess.rtl_kicked, name:mEscape())
+    	        if rtl_status == 'ban' then
+    	            cross.addBanList(msg.chat.id, msg.from.id, name, 'Rtl')
+    	            message = make_text(lang[ln].preprocess.rtl_banned, name:mEscape())
+    	        end
+    	        api.sendMessage(msg.chat.id, message, true)
+    	    end
+        end
     end
     
     if msg.text and msg.text:find('([\216-\219][\128-\191])') then
-		if msg.fromadmin then
-		else
-			local arab_status = (db:hget('chat:'..msg.chat.id..':char', 'Arab')) or 'allowed'
-			if arab_status == 'kick' or arab_status == 'ban' then
-				local name = msg.from.first_name
-				if msg.from.username then name = name..' (@'..msg.from.username..')' end
-				local res
-				if arab_status == 'kick' then
-					print("Kicking at arab ")
-					res = api.kickUser(msg.chat.id, msg.from.id, ln)
-				elseif arab_status == 'ban' then
-					res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
-				end
-				if res then
-					cross.saveBan(msg.from.id, 'arab') --save ban
-					local message = make_text(lang[ln].preprocess.arab_kicked, name:mEscape())
-					if arab_status == 'ban' then
-						cross.addBanList(msg.chat.id, msg.from.id, name, 'Arab')
-						message = make_text(lang[ln].preprocess.arab_banned, name:mEscape())
-					end
-					api.sendMessage(msg.chat.id, message, true)
-				end
-			end
-		end
+        local arab_status = (db:hget('chat:'..msg.chat.id..':char', 'Arab')) or 'allowed'
+        if arab_status == 'kick' or arab_status == 'ban' then
+            local name = msg.from.first_name
+            if msg.from.username then name = name..' (@'..msg.from.username..')' end
+    	    local res
+    	    if arab_status == 'kick' then
+    	        res = api.kickUser(msg.chat.id, msg.from.id, ln)
+    	    elseif arab_status == 'ban' then
+    	        res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
+    	    end
+    	    if res then
+    	        cross.saveBan(msg.from.id, 'arab') --save ban
+    	        local message = make_text(lang[ln].preprocess.arab_kicked, name:mEscape())
+    	        if arab_status == 'ban' then
+    	            cross.addBanList(msg.chat.id, msg.from.id, name, 'Arab')
+    	            message = make_text(lang[ln].preprocess.arab_banned, name:mEscape())
+    	        end
+    	        api.sendMessage(msg.chat.id, message, true)
+    	    end
+        end
     end
     
     if is_blocked(msg.from.id) then --ignore blocked users
@@ -212,33 +195,30 @@ pre_process = function(msg, ln)
 		local seenSupport = db:hget('globalBan:'..msg.from.id, 'seen')
 		--end 
 		if isBanned == '1' then
-			if msg.fromadmin then
-			else
-				if msg.chat.id ~= support then
-					api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
-					local moti = db:hget('globalBan:'..msg.from.id, 'motivation')
-					cross.addBanList(msg.chat.id, msg.from.id, msg.from.username, 'Global banned for: '..moti)
-					api.sendMessage(msg.chat.id, msg.from.first_name..' has been automatically banned due to a history of: '..moti..'. To appeal this ban please join @werewolfsupport')
-					api.sendAdmin(msg.from.first_name..', '..msg.from.id..' has been notified of ban in '..msg.chat.id..', '..msg.chat.title)
-					if msg.from.username then
-						print(msg.from.id..', '..msg.from.username..' Global banned '..msg.chat.id)
-					else
-						print(msg.from.id..', '..msg.from.first_name..' Global banned '..msg.chat.id)
-					end
-				elseif seenSupport ~= '1' then
-					local moti = db:hget('globalBan:'..msg.from.id, 'motivation')
-					local hash = 'globalBan:'..msg.from.id
-					db:hset(hash, 'seen', 1)
-					api.sendMessage(msg.chat.id, msg.from.first_name..' has a history of: '..moti..' and has joined @werewolfsupport to appeal this ban')
+			if msg.chat.id ~= support then
+				api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
+				local moti = db:hget('globalBan:'..msg.from.id, 'motivation')
+				cross.addBanList(msg.chat.id, msg.from.id, msg.from.username, 'Global banned for: '..moti)
+				api.sendMessage(msg.chat.id, msg.from.first_name..' has been automatically banned due to a history of: '..moti..'. To appeal this ban please join @werewolfsupport')
+				api.sendAdmin(msg.from.first_name..', '..msg.from.id..' has been notified of ban in '..msg.chat.id..', '..msg.chat.title)
+				if msg.from.username then
+					print(msg.from.id..', '..msg.from.username..' Global banned '..msg.chat.id)
+				else
+					print(msg.from.id..', '..msg.from.first_name..' Global banned '..msg.chat.id)
 				end
+			elseif seenSupport ~= '1' then
+				local moti = db:hget('globalBan:'..msg.from.id, 'motivation')
+				local hash = 'globalBan:'..msg.from.id
+				db:hset(hash, 'seen', 1)
+				api.sendMessage(msg.chat.id, msg.from.first_name..' has a history of: '..moti..' and has joined @werewolfsupport to appeal this ban')			
 			end
 		end
 		--print("by return")
-		--local path = "./logs/MessageLog.txt"
-		--file = io.open(path, "w")
-		--local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..clr.red..msg.chat.title..clr.white..msg.chat.id
-		--:write(logText)
-		--file:close()
+		local path = "./logs/MessageLog.txt"
+		file = io.open(path, "w")
+		local logText = clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..msg.from.first_name..', '..msg.from.id..' said: '..msg.text..' in '..clr.red..msg.chat.title..clr.white..msg.chat.id
+		file:write(logText)
+		file:close()
 	end
     if msg.chat.type == "private" and msg.cb and msg.text == "###cb:close" then
         api.editMessageText(msg.chat.id, msg.message_id, "Done.")

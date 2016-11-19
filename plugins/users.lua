@@ -43,7 +43,7 @@ local function get_name_getban(msg, blocks, user_id)
 	end
 end
 
-local function get_ban_info(user_id, chat_id, title, ln)
+local function get_ban_info(user_id, chat_id, ln)
 	local hash = 'ban:'..user_id
 	local ban_info = db:hgetall(hash)
 	--if not next(ban_info) then
@@ -66,15 +66,10 @@ local function get_ban_info(user_id, chat_id, title, ln)
 		--if text == '' then
 		--	return lang[ln].getban.nothing
 		--else
-		if chat_id ~= nil then
 			local warns = (db:hget('chat:'..chat_id..':warns', user_id)) or 0
 			local media_warns = (db:hget('chat:'..chat_id..':mediawarn', user_id)) or 0
-			if title ~= nil then
-				text = text..'\n*Info for group '..title..'*:'
-			end
 			text = text..'\n`Warns`: '..warns..'\n`Media warns`: '..media_warns
-		end
-		return text
+			return text
 		--end
 	--end
 end
@@ -106,27 +101,12 @@ local function check_reply(msg)
 	end
 end
 
-local function get_userinfo(user_id, chat_id, title, ln)
-	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, title, ln)
+local function get_userinfo(user_id, chat_id, ln)
+	return lang[ln].userinfo.header_1..get_ban_info(user_id, chat_id, ln)
 end
 
 local action = function(msg, blocks, ln)
-    if blocks[1] == 's' then
-		if msg.chat.type == 'private' then return end
-		if msg.reply then
-			local messageid = msg.reply.message_id
-			local saveTo = msg.from.id
-			local chat = msg.chat.id
-			local res, code = api.forwardMessage(saveTo, chat, messageid)
-			if code == 403 then
-				api.sendReply(msg, "Please start @werewolfbutlerbot.")
-			else
-				api.sendReply(msg, 'Message saved')
-			end
-		else
-			api.sendReply(msg, "Please reply to a message to save it")
-		end
-	elseif blocks[1] == 'adminlist' then
+    if blocks[1] == 'adminlist' then
     	if msg.chat.type == 'private' then return end
     	local no_usernames
     	local send_reply = true
@@ -144,10 +124,7 @@ local action = function(msg, blocks, ln)
         local creator, adminlist = cross.getModlist(msg.chat.id, no_usernames)
         out = make_text(lang[ln].mod.modlist, creator, adminlist)
         if not send_reply then
-        	local res, code = api.sendMessage(msg.from.id, out, true)
-			if code == 403 then
-				api.sendReply(msg, "Please start @werewolfbutlerbot and try this command again")
-			end
+        	api.sendMessage(msg.from.id, out, true)
         else
             api.sendReply(msg, out, true)
         end
@@ -173,10 +150,6 @@ local action = function(msg, blocks, ln)
 				if res.result.user.username then name = name..' (@'..res.result.user.username..')' end
 				if msg.chat.type == 'group' and is_banned(msg.chat.id, user_id) then
 					status = 'kicked'
-				end
-				reason = db:hget('chat:'..msg.chat.id..':bannedlist:'..user_id, 'why')
-				if reason ~= nil then
-					name = name.."\n"..reason
 				end
 		 		local text = make_text(lang[ln].status[status], name)
 		 		api.sendReply(msg, text)
@@ -446,34 +419,13 @@ local action = function(msg, blocks, ln)
 		
 		local keyboard = do_keyboard_userinfo(user_id, ln)
 		
-		local text = get_userinfo(user_id, msg.chat.id, msg.chat.title, ln)
+		local text = get_userinfo(user_id, msg.chat.id, ln)
 		
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
 		else
 			api.sendKeyboard(msg.chat.id, text, keyboard, true)
 		end
-	elseif blocks[1] == 'me' then
-		local chat_id = msg.chat.id
-		local chat_name = nil
-		if msg.chat.type == 'private' then 
-			chat_id = nil
-		else
-			chat_name = msg.chat.title:mEscape()
-		end
-		local user_id = msg.from.id
-		
-		local text = get_userinfo(user_id, chat_id, chat_name, ln)
-		
-		local res, code = api.sendMessage(user_id, text, true)
-		if msg.chat.type ~= 'private' then
-			if code == 403 then
-				api.sendReply(msg, lang[ln].bonus.msg_me, true)
-			else
-				api.sendReply(msg, lang[ln].bonus.general_pm, true)
-			end
-		end
-		
 	elseif blocks[1] == 'banuser' then
 		if not is_mod(msg) then
     		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
@@ -499,8 +451,6 @@ local action = function(msg, blocks, ln)
         api.editMessageText(msg.chat.id, msg.message_id, lang[ln].warn.nowarn..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
     elseif blocks[1] == 'ping' then
 		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
-	elseif blocks[1] == 'enforce' then
-		api.sendReply(msg, '/ me now')
 	end
 end
 
@@ -523,30 +473,8 @@ return {
         '^/(user) (@[%w_]+)$',
 		'^/(user) (%d+)$',
 		'^/(ping)$',
-		'^/(s)$',
-		'^/(me)$',
 		
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
-
-        '^!(id)$',
-        '^!(adminlist)$',
-        '^!(status) (@[%w_]+)$',
-        '^!(status) (%d+)$',
-        '^!(settings)$',
-        '^!(export)(ban)$',
-        '^!(export)(save)$',
-        '^!(importban)$',
-        '^!(support)$',
-        '^!(welcome) (.*)$',
-        '^!(welcome)$',
-        '^!(user)$',
-        '^!(user) (.+)$', --this is to get also /user + text mention
-        '^!(user) (@[%w_]+)$',
-        '^!(user) (%d+)$',
-        '^!(ping)$',
-        '^!(s)$',
-        '^!(me)$',
-		'^!(enforce)',
 	}
 }

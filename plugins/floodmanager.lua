@@ -69,7 +69,7 @@ local function action(msg, blocks, ln)
     local text, keyboard
     
     if not msg.cb then
-        if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+        if is_mod(msg) or config.admin.superAdmins[msg.from.id] then 
 			if blocks[1]:match('%d%d?') then
 				if tonumber(blocks[1]) < 4 or tonumber(blocks[1]) > 25 then
 					api.sendReply(msg, make_text(lang[ln].floodmanager.number_invalid, blocks[1]), true)
@@ -152,8 +152,5 @@ return {
         '^###cb:flood:(dim):(-%d+)$',
         '^###cb:flood:(raise):(-%d+)$',
         '^###cb:flood:(exc):(%a+):(-%d+)$',
-
-        '^!antiflood$',
-        '^!antiflood (%d%d?)$',
     }
 }

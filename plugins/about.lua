@@ -7,14 +7,14 @@ local action = function(msg, blocks, ln)
     local hash = 'chat:'..msg.chat.id..':about'
     if blocks[1] == 'about' then
     	local out = cross.getAbout(msg.chat.id, ln)
-    	if is_locked(msg, 'About') and not msg.fromadmin then
+    	if is_locked(msg, 'About') and not is_mod(msg) then
     		api.sendMessage(msg.from.id, out, true)
     	else
         	api.sendReply(msg, out, true)
         end
     end
     
-    if not msg.fromadmin then
+    if not is_mod(msg) then
 		return
 	end
 	
@@ -77,10 +77,10 @@ return {
 	action = action,
 	get_about = get_about,
 	triggers = {
-		'^!(setabout)$', --to warn if an user don't add a text
-		'^!(setabout) (.*)',
-		'^!(about)$',
-		'^!(addabout)$', --to warn if an user don't add a text
-		'^!(addabout) (.*)',
+		'^/(setabout)$', --to warn if an user don't add a text
+		'^/(setabout) (.*)',
+		'^/(about)$',
+		'^/(addabout)$', --to warn if an user don't add a text
+		'^/(addabout) (.*)',
 	}
 }

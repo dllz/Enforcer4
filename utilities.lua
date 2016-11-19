@@ -72,22 +72,6 @@ function is_mod(msg)
 		return false, true
 	end
 end
-function is_moduser(msg)
-	if msg.reply ~= nil then
-		local res = api.getChatMember(msg.chat.id, msg.reply.from.id)
-		if not res then
-			return false, false
-		end
-		local status = res.result.status
-		if status == 'creator' or status == 'administrator' then
-			return true, true
-		else
-			return false, true
-		end
-	else
-		return false, false
-	end
-end
 
 function is_mod2(chat_id, user_id)
 	local res = api.getChatMember(chat_id, user_id)
@@ -101,7 +85,6 @@ function is_mod2(chat_id, user_id)
 		return false, true
 	end
 end
-
 
 function is_owner(msg)
 	local status = api.getChatMember(msg.chat.id, msg.from.id).result.status
@@ -900,7 +883,7 @@ local function extGet(hash, id, key)
         return false, 'hash does not exists'
     else
         if key then
-            return db:hget(hash..':'..id, key)
+            return db:hegt(hahs..':'..id, key)
         else
             if id then
                 local hgetall_res = db:hgetall(hash..':'..id)

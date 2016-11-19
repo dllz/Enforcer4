@@ -39,7 +39,7 @@ end
 local action = function(msg, blocks, ln)
 	print(2222)
 	if not msg.cb and msg.chat.type ~= 'private' then
-		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then 
 			if blocks[1] == 'media list' then
 			local media_sett = db:hgetall('chat:'..msg.chat.id..':media')
 			local text = lang[ln].mediasettings.settings_header
@@ -107,8 +107,6 @@ return {
 		'^###cb:(media):(.*):(.*)',
 		'^/(media list)$',
 		'^/(media)$',
-		'^!(media list)$',
-		'^!(media)$',
 		
 
 	}

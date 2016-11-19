@@ -66,13 +66,6 @@ local function getBanList(chat_id, ln)
     else
         local i = 1
         for banned_id,info in pairs(banned_users) do
-			if info.nick == nil then
-				if banned_id ~= nil then
-					info.nick = tostring(banned_id)
-				else
-					info.nick = "anon"
-				end
-			end
             text = text..'*'..i..'* - '..info.nick:mEscape()
             if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
             text = text..'\n'
@@ -119,14 +112,11 @@ end
 
 local action = function(msg, blocks, ln)
 	if msg.chat.type ~= 'private' then
-		local chatMod = is_moduser(msg)
-		if msg.fromadmin or config.admin.superAdmins[msg.from.id] then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			--commands that don't need a target user
 			if blocks[1] == 'kickme' then
-				if msg.fromadmin then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
-					return
-				end
+				api.sendReply(msg, lang[ln].kick_errors[2], true)
+				return
 			end
 			if blocks[1] == 'banlist' and not blocks[2] then
    				local banlist, is_empty = getBanList(msg.chat.id, ln)
@@ -179,10 +169,6 @@ local action = function(msg, blocks, ln)
 	    	end
 			
 			if blocks[1] == 'kickid' then
-				if chatMod then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
-					return
-				end
 				local res, motivation = api.kickUser(msg.chat.id, blocks[2], ln)
 		    	if not res then
 		    		if not motivation then
@@ -197,52 +183,7 @@ local action = function(msg, blocks, ln)
 		    		api.sendMessage(msg.chat.id, 'User Kicked', true)
 		    	end
 			end
-		  
-		    if blocks[1] == 'banid' then
-				if chatMod then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
-					return
-				end
-                local is_normal_group = (msg.chat.type == 'group')
-                local chat_id = msg.chat.id
-                local user_id = blocks[2]
-
-                    --after this line, I kinda copied from ban x"D
-                    local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
-                if not res then
-                    if not motivation then
-                      motivation = lang[ln].banhammer.general_motivation
-                    end
-                    api.sendReply(msg, motivation, true)
-                else
-                    local is_already_tempbanned = db:sismember('chat:'..chat_id..':tempbanned', user_id)
-                    if is_already_tempbanned then
-                        print('Is already tempbanned')
-                        local all = db:hgetall('tempbanned')
-                        if next(all) then
-                            for unban_time,info in pairs(all) do
-                            --print(chat_id..':'..user_id..' '..info)
-                                if string.match(chat_id..':'..user_id, info) then
-                                    db:hdel('tempbanned', unban_time)
-                                    --print('TimeRemoved '..unban_time)
-                                end
-                            end
-                        end
-                        db:srem('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
-                        --print('Removed from db '..'chat:'..chat_id..':tempbanned '..user_id)
-                    end
-                    --save the ban
-                    cross.saveBan(user_id, 'ban')
-                    --add to banlist
-                    --local nick = blocks[2] --banned user
-                    local why = msg.text:gsub('^/ban %d+%s?', '')
-                    --id = getId(msg)
-                    cross.addBanList(msg.chat.id, user_id, user_id, why)
-                    db:hdel('chat:'..msg.chat.id..':userJoin', user_id)
-                    api.sendKeyboard(msg.chat.id, lang[ln].banhammer.banned:build_text(get_nick(msg, false, true):mEscape(), user_id:mEscape()), {inline_keyboard = {{{text = 'Unban', callback_data = 'unban:'..user_id}}}}, true)
-                end
-		    end
-		  
+		    
 		    --commands that need a target user
 		    
 		    if not msg.reply_to_message and not blocks[2] and not msg.cb then
@@ -262,10 +203,6 @@ local action = function(msg, blocks, ln)
 		 	if blocks[1] == 'tempban' then
 				if not msg.reply then
 					api.sendReply(msg, lang[ln].banhammer.reply)
-					return
-				end
-				if chatMod then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
 					return
 				end
 				local user_id = msg.reply.from.id
@@ -303,19 +240,17 @@ local action = function(msg, blocks, ln)
 					end
 				end
 			end
-
+		 	
+		 	
+		 	
 		 	if blocks[1] == 'kick' then
-				if chatMod then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
-					return
-				end
 		    	local res, motivation = api.kickUser(chat_id, user_id, ln)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = lang[ln].banhammer.general_motivation
 						api.sendReply(msg, motivation, true)
 		    		else
-						api.sendReply(msg, 'Kick Failed, please manually unban '..get_nick(msg, blocks, false):mEscape())
+						api.sendReply(msg, 'Kick Failed, please manually unban')
 					end
 		    	else
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
@@ -328,10 +263,6 @@ local action = function(msg, blocks, ln)
 	   		if msg.chat.type == 'group' then is_normal_group = true end
 	   		
 	   		if blocks[1] == 'ban' then
-				if chatMod then
-					api.sendReply(msg, lang[ln].kick_errors[2], true)
-					return
-				end
 	   			local res, motivation = api.banUser(chat_id, user_id, is_normal_group, ln)
 		    	if not res then
 		    		if not motivation then
@@ -364,16 +295,12 @@ local action = function(msg, blocks, ln)
 		    			why = msg.text:input()
 						
 		    		else
-		    			why = msg.text:gsub('^!ban @[%w_]+%s?', '')
+		    			why = msg.text:gsub('^/ban @[%w_]+%s?', '')
 		    		end
 					--id = getId(msg)
 		    		cross.addBanList(msg.chat.id, user_id, nick, why)
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
 		    		api.sendKeyboard(msg.chat.id, lang[ln].banhammer.banned:build_text(get_nick(msg, false, true):mEscape(), nick:mEscape()), {inline_keyboard = {{{text = 'Unban', callback_data = 'unban:'..user_id}}}}, true)
-					if msg.reply then
-						api.sendMessage(msg.from.id, msg.reply.from.id..' banned on '..os.date('%d %B %Y, %X')..' UTC]n'..msg.chat.title)
-						api.forwardMessage(msg.from.id, msg.chat.id, msg.reply.message_id)
-					end
 		    	end
     		end
    			if blocks[1] == 'unban' then
@@ -413,19 +340,19 @@ local action = function(msg, blocks, ln)
 		if blocks[1] == 'getrekt' then
 			if config.admin.superAdmins[msg.from.id] then
 				 
-				local mot = table.concat({table.unpack(blocks, 2, blocks.length)}, ' ')
 				if msg.reply.forward_from ~= nil then 
 					local forward = msg.reply.forward_from.id 
 					local hash = 'globalBan:'..forward
+					local mot = blocks[2]
 					print(forward..mot)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
 					db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
 					api.sendReply(msg, forward..' is rekted', true)
 				else
-					local user = msg.reply.from.id
-					local hash = 'globalBan:'..user
-					-- It still rekts it, just the user..'is rekted' msg was fucked before
+					local uesr = msg.reply.from.id
+					local hash = 'globalBan:'..uesr
+					local mot = blocks[2]
 					print(mot)
 					db:hset(hash, 'banned', 1)
 					db:hset(hash, 'motivation', mot)
@@ -434,32 +361,6 @@ local action = function(msg, blocks, ln)
 				end
 			end
 		end
-		-- temporary!
-		if blocks[1] == 'unrekt' then
-			if config.admin.admins[msg.from.id] then
-				 
-				if msg.reply.forward_from ~= nil then 
-					local forward = msg.reply.forward_from.id 
-					local hash = 'globalBan:'..forward
-					local mot = blocks[2]
-					print(forward..mot)
-					db:hset(hash, 'banned', 0)
-					db:hset(hash, 'motivation', mot)
-					db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
-					api.sendReply(msg, forward..' is unrekted', true)
-				else
-					local user = msg.reply.from.id
-					local hash = 'globalBan:'..user
-					local mot = blocks[2]
-					print(mot)
-					db:hset(hash, 'banned', 0)
-					db:hset(hash, 'motivation', mot)
-					db:hset(hash, 'time', os.date('%d %B %Y, %X'))
-					api.sendReply(msg, user..' is unrekted', true)
-				end
-			end
-		end
-		
 	end
 end
 
@@ -472,34 +373,15 @@ return {
 		'^/(kick) (@[%w_]+)',
 		'^/(kick)',
 		'^/(kickid) (%d+)',
-		'^/(banid) (%d+)',
 		'^/(banlist)$',
 		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
-		'^/(ban)$',
-		'^/(ban) ',
+		'^/(ban)',
 		'^/(tempban) (%d+)',
 		'^/(unban) (@[%w_]+)',
 		'^/(unban)',
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
-		'^/(getrekt) ([%w]+)',
-		'^/(unrekt) ([%w]+)',
-        '^!(kickme)%s?',
-        '^!(kickid) (%d+)',
-        '^!(kick) (@[%w_]+)',
-        '^!(kick)',
-        '^!(kickid) (%d+)',
-        '^!(banid) (%d+)',
-        '^!(banlist)$',
-        '^!(banlist) (-)$',
-        '^!(ban) (@[%w_]+)',
-        '^!(ban)$',
-        '^!(ban) ',
-        '^!(tempban) (%d+)',
-        '^!(unban) (@[%w_]+)',
-        '^!(unban)',
-        '^!(getrekt) ([%w]+)',
-        '^!(unrekt) ([%w]+)'
+		'^/(getrekt) ([%w]+)'
 	}
 }

@@ -5,17 +5,14 @@ local action = function(msg, blocks, ln)
     local hash = 'chat:'..msg.chat.id..':rules'
     if blocks[1] == 'rules' then
         local out = cross.getRules(msg.chat.id, ln)
-    	if is_locked(msg, 'Rules') and not msg.fromadmin then
-			local res, code = api.sendMessage(msg.from.id, out, true)
-			if	code == 403 then
-				api.sendReply(msg, "Please start @werewolfbutlerbot and try this command again")
-			end
+    	if is_locked(msg, 'Rules') and not is_mod(msg) then
+    		api.sendMessage(msg.from.id, out, true)
     	else
         	api.sendReply(msg, out, true)
         end
     end
 	
-	if not msg.fromadmin then
+	if not is_mod(msg) then
 		return
 	end
 	
@@ -83,9 +80,6 @@ return {
 		'^/(setrules) (.*)',
 		'^/(rules)$',
 		'^/(addrules)$',
-		'^!(addrules) (.*)',
-		'^!(rules)$',
-		'^!(setrules)$',
-		'^!(setrules) (.*)',
+		'^/(addrules) (.*)'	
 	}
 }

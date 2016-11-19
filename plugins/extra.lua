@@ -1,8 +1,9 @@
 local action = function(msg, blocks, ln)
+	
 	if msg.chat.type == 'private' then return end
 	
 	if blocks[1] == 'extra' then
-		if not msg.fromadmin then return end
+		if not is_mod(msg) then return end
 		if not blocks[2] then return end
 		if not blocks[3] and not msg.reply then return end
 		
@@ -20,27 +21,6 @@ local action = function(msg, blocks, ln)
 	    		db:hset('chat:'..msg.chat.id..':extra', blocks[2], to_save)
 	    		api.sendReply(msg, 'This media has been saved as response to '..blocks[2])
 	    	end
-		elseif msg.reply and blocks[3] then
-			local type = get_media_type(msg.reply)
-			if type ~= 'gif' then
-				return
-			else
-				local to_save = msg.reply.document.file_id
-				local res, code = api.sendReply(msg, blocks[3], true)
-				if not res then
-					if code == 118 then
-						api.sendMessage(msg.chat.id, lang[ln].bonus.too_long)
-					else
-						api.sendMessage(msg.chat.id, lang[ln].breaks_markdown, true)
-					end
-				else
-					db:hset('chat:'..msg.chat.id..':extra:'..blocks[2], 'mediaid', to_save)
-					db:hset('chat:'..msg.chat.id..':extra', blocks[2], blocks[3])
-					local msg_id = res.result.message_id
-					api.editMessageText(msg.chat.id, msg_id, make_text(lang[ln].extra.setted, blocks[2]), false)
-				end
-
-			end
 		else
 	    	local hash = 'chat:'..msg.chat.id..':extra'
 	    	
@@ -53,13 +33,12 @@ local action = function(msg, blocks, ln)
 				end
     		else
 	    		db:hset(hash, blocks[2], blocks[3])
-				db:hdel(hash..':'..blocks[2], 'mediaid')
 	    		local msg_id = res.result.message_id
 				api.editMessageText(msg.chat.id, msg_id, make_text(lang[ln].extra.setted, blocks[2]), false)
     		end
     	end
 	elseif blocks[1] == 'extra list' then
-	    if not msg.fromadmin then return end
+	    if not is_mod(msg) then return end
 	    
 	    local hash = 'chat:'..msg.chat.id..':extra'
 	    local commands = db:hkeys(hash)
@@ -74,7 +53,7 @@ local action = function(msg, blocks, ln)
 	        api.sendReply(msg, out, true)
 	    end
     elseif blocks[1] == 'extra del' then
-        if not msg.fromadmin then return end
+        if not is_mod(msg) then return end
 	    
 	    local hash = 'chat:'..msg.chat.id..':extra'
 	    local success = db:hdel(hash, blocks[2])
@@ -88,19 +67,16 @@ local action = function(msg, blocks, ln)
     else
     	local hash = 'chat:'..msg.chat.id..':extra'
     	local text = db:hget(hash, blocks[1])
-		if not text then return end
+        if not text then return end
         local file_id = text:match('^###.+###:(.*)')
-		local hasMedia = db:hget(hash..':'..blocks[1], 'mediaid')
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
-        if is_locked(msg, 'Extra') and not msg.fromadmin then --send it in private
-        	if not file_id or not hasMedia then
-            	api.sendMessage(msg.from.id, text, true, nil, true)
+        if is_locked(msg, 'Extra') and not is_mod(msg) then --send it in private
+        	if not file_id then
+            	api.sendMessage(msg.from.id, text, true)
             else
             	if special_method then
             		api.sendMediaId(msg.from.id, file_id, special_method) --photo, voices, video need their method to be sent by file_id
-            	elseif hasMedia then
-					api.sendDocumentWithCapId(msg.from.id, hasMedia, text)
-				else
+            	else
             		api.sendDocumentId(msg.from.id, file_id)
             	end
             end
@@ -117,12 +93,8 @@ local action = function(msg, blocks, ln)
         		else
         			api.sendDocumentId(msg.chat.id, file_id, msg_to_reply)
         		end
-        	elseif hasMedia ~= nil then
-				--api.sendLog(hasMedia)
-				local res, code = api.sendDocumentWithCapId(msg.chat.id, hasMedia, text, msg_to_reply)
-				--api.sendLog(code)
-			else
-        		api.sendMessage(msg.chat.id, text, true, msg_to_reply, true) --if the mod replies to an user, the bot will reply to the user too
+        	else
+        		api.sendMessage(msg.chat.id, text, true, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
         	end
         end
     end
@@ -136,11 +108,6 @@ return {
 		'^/(extra) (#[^%s_]*)',
 		'^/(extra del) (#[^%s_]*)$',
 		'^/(extra list)$',
-		'^(#[^%s_]*)$',
-		'^!(extra)$',
-		'^!(extra) (#[^%s_]*)%s(.*)$',
-		'^!(extra) (#[^%s_]*)',
-		'^!(extra del) (#[^%s_]*)$',
-		'^!(extra list)$',
+		'^(#[^%s_]*)$'
 	}
 }

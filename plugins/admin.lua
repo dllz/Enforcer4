@@ -15,7 +15,6 @@ local triggers2 = {
 	'^/a(log)$',
 	'^/a(admin)$',
 	'^/a(block) (%d+)$',
-    '^/a(whois) (%d+)$',
 	'^/a(block) (-%d+)$',
 	'^/a(block)$',
 	'^/a(unblock) (%d+)$',
@@ -66,74 +65,6 @@ local triggers2 = {
 	'^/a(remgroup) (-%d+)$',
 	'^/a(remgroup) (true) (-%d+)$',
 	'^/a(dbdump) (.*)$',
-
-	'^!a(init)$',
-	'^!a(stop)$',
-	'^!a(backup)$',
-	'^!a(bc) (.*)$',
-	'^!a(bcg) (.*)$',
-	'^!a(save)$',
-	'^!a(stats)$',
-	'^!a(lua)$',
-	'^!a(lua) (.*)$',
-	'^!a(run) (.*)$',
-	'^!a(log) (del) (.*)',
-	'^!a(log) (del)',
-	'^!a(log) (.*)$',
-	'^!a(log)$',
-	'^!a(admin)$',
-	'^!a(block) (%d+)$',
-	'^!a(whois) (%d+)$',
-	'^!a(block) (-%d+)$',
-	'^!a(block)$',
-	'^!a(unblock) (%d+)$',
-	'^!a(unblock) (-%d+)$',
-	'^!a(unblock)$',
-	'^!a(isblocked)$',
-	'^!a(ping redis)$',
-	'^!a(leave) (-%d+)$',
-	'^!a(leave)$',
-	'^!a(post) (.*)$',
-	'^###(forward)',
-	'^!a(reset) (.*)$',
-	'^!a(reset)$',
-	'^!a(send) (-?%d+) (.*)$',
-	'^!a(editmsg) (-?%d+) (%d+) (.*)$',
-	'^!a(send) (.*)$',
-	'^!a(adminmode) (%a%a%a?)$',
-	'^!a(usernames)$',
-	'^!a(api errors)$',
-	'^!a(rediscli) (.*)$',
-	'^!a(genlang)$',
-	'^!a(genlang) (%a%a)$',
-	'^!a(trfile) (%a%a)$',
-	'^!a(trfile)$',
-	'^!a(fixaction) (-%d+)$',
-	'^!a(sendplug) (.*)$',
-	'^!a(sendfile) (.*)$',
-	'^!a(r)$',
-	'^!a(r) (.*)',
-	'^!a(download)$',
-	'^!a(migrate) (%d+)%s(%d+)',
-	'^!a(resid) (%d+)$',
-	'^!a(checkgroups)$',
-	'^!a(update)$',
-	'^!a(subadmin) (yes)$',
-	'^!a(subadmin) (no)$',
-	'^!a(tban) (get)$',
-	'^!a(tban) (flush)$',
-	'^!a(db) (.*)$',
-	'^!a(aa)$',
-	'^!a(remban) (@[%w_]+)$',
-	'^!a(info) (%d+)$',
-	'^!a(prevban) (.*)$',
-	'^!a(rawinfo) (.*)$',
-	'^!a(editpost) (%d%d%d?) (.*)$',
-	'^!a(cleandeadgroups)$',
-	'^!a(initgroup) (-%d+)$',
-	'^!a(remgroup) (-%d+)$',
-	'^!a(remgroup) (true) (-%d+)$',
-	'^!a(dbdump) (.*)$',
 }
 
 local logtxt = ''
@@ -212,20 +143,6 @@ local action = function(msg, blocks, ln)
 	end
 	
 	if not blocks or not next(blocks) then return true end --continue to match plugins
-
-    if blocks[1] == 'whois' then
-        if blocks[2] then
-           local hash = 'bot:ids'
-            if db:hget(hash, blocks[2]) then
-                local user = db:hget(hash, blocks[2])
-                api.sendMessage(msg.chat.id, 'This is the user name i have associated with that ID '..user)
-            else
-                api.sendMessage(msg.chat.id, 'ID not found')
-            end
-        else
-            api.sendMessage(msg.chat.id, 'Please add an ID')
-        end
-    end
 	
 	if blocks[1] == 'dbdump' then 
 		print(Hello)
@@ -357,9 +274,7 @@ local action = function(msg, blocks, ln)
 	    end
 	    local usernames = db:hkeys('bot:usernames')
 	    text = text..'- *usernames cache*: `'..#usernames..'`\n'
-		local ids = db:hkeys('bot:ids')
-		text = text..'- *User ID cache*:  `'..#ids..'` \n'
-
+	    
 	    --db info
 	    text = text.. '\n*DB stats*\n'
 		local dbinfo = db:info()

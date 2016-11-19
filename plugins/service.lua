@@ -14,58 +14,58 @@ local function gsub_custom_welcome(msg, custom)
 end
 
 local function get_welcome(msg, ln)
-    if is_locked(msg, 'Welcome') then
-        return false
-    end
-    local type = db:hget('chat:'..msg.chat.id..':welcome', 'type')
-    local content = db:hget('chat:'..msg.chat.id..':welcome', 'content')
-    if type == 'media' then
-        local file_id = content
-        api.sendDocumentId(msg.chat.id, file_id)
-        return false
-    elseif type == 'custom' then
-        local hasMedia = db:hget('chat:'..msg.chat.id..':welcome', 'hasmedia')
-        if hasMedia == 'true' then
-            local file = db:hget('chat:'..msg.chat.id..':welcome', 'media')
-            local text = gsub_custom_welcome(msg, content)
-            api.sendDocumentWithCapId(msg.chat.id, file, text)
-            return false
-        else
-            return gsub_custom_welcome(msg, content)
-        end
-    elseif type == 'composed' then
-        if not(content == 'no') then
-            local abt = cross.getAbout(msg.chat.id, ln)
-            local rls = cross.getRules(msg.chat.id, ln)
-            local creator, admins = cross.getModlist(msg.chat.id, ln)
-            print(admins)
-            local mods
-            if not creator then
-                mods = '\n'
-            else
-                mods = make_text(lang[ln].service.welcome_modlist, creator:mEscape(), admins:gsub('*', ''):mEscape())
-            end
-            local text = make_text(lang[ln].service.welcome, msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
-            if content == 'a' then
-                text = text..'\n\n'..abt
-            elseif content == 'r' then
-                text = text..'\n\n'..rls
-            elseif content == 'm' then
-                text = text..mods
-            elseif content == 'ra' then
-                text = text..'\n\n'..abt..'\n\n'..rls
-            elseif content == 'am' then
-                text = text..'\n\n'..abt..mods
-            elseif content == 'rm' then
-                text = text..'\n\n'..rls..mods
-            elseif content == 'ram' then
-                text = text..'\n\n'..abt..'\n\n'..rls..mods
-            end
-            return text
-        else
-            return make_text(lang[ln].service.welcome, msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
-        end
-    end
+	if is_locked(msg, 'Welcome') then
+		return false
+	end
+	local type = db:hget('chat:'..msg.chat.id..':welcome', 'type')
+	local content = db:hget('chat:'..msg.chat.id..':welcome', 'content')
+	if type == 'media' then
+		local file_id = content
+		api.sendDocumentId(msg.chat.id, file_id)
+		return false
+	elseif type == 'custom' then
+		local hasMedia = db:hget('chat:'..msg.chat.id..':welcome', 'hasmedia')
+		if hasMedia == 'true' then
+			local file = db:hget('chat:'..msg.chat.id..':welcome', 'media')
+			local text = gsub_custom_welcome(msg, content)
+			api.sendDocumentWithCapId(msg.chat.id, file, text)
+			return false
+		else 
+			return gsub_custom_welcome(msg, content)
+		end
+	elseif type == 'composed' then
+		if not(content == 'no') then
+			local abt = cross.getAbout(msg.chat.id, ln)
+			local rls = cross.getRules(msg.chat.id, ln)
+			local creator, admins = cross.getModlist(msg.chat.id, ln)
+			print(admins)
+			local mods
+			if not creator then
+				mods = '\n'
+			else
+				mods = make_text(lang[ln].service.welcome_modlist, creator:mEscape(), admins:gsub('*', ''):mEscape())
+			end
+			local text = make_text(lang[ln].service.welcome, msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+			if content == 'a' then
+				text = text..'\n\n'..abt
+			elseif content == 'r' then
+				text = text..'\n\n'..rls
+			elseif content == 'm' then
+				text = text..mods
+			elseif content == 'ra' then
+				text = text..'\n\n'..abt..'\n\n'..rls
+			elseif content == 'am' then
+				text = text..'\n\n'..abt..mods
+			elseif content == 'rm' then
+				text = text..'\n\n'..rls..mods
+			elseif content == 'ram' then
+				text = text..'\n\n'..abt..'\n\n'..rls..mods
+			end
+			return text
+		else
+			return make_text(lang[ln].service.welcome, msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+		end
+	end
 end
 
 local action = function(msg, blocks, ln)
@@ -81,8 +81,8 @@ local action = function(msg, blocks, ln)
 			api.leaveChat(msg.chat.id)
 			return
 		end
-		if is_blocked_global(msg.adder.id) then
-			api.sendMessage(msg.chat.id, '_You ('..msg.adder.first_name:mEscape()..', '..msg.adder.id..') are in the blocked list_', true)
+		if is_blocked_global(msg.adder.id) or is_blocked_global(msg.chat.id) then
+			api.sendMessage(msg.chat.id, '_You are blocked from using this bot_', true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
@@ -120,8 +120,8 @@ local action = function(msg, blocks, ln)
 		end
 		
 		if msg.added.id == 95890871 then
-				api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
-				return
+			api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
+			return
 		end
 		if msg.added.id == 125311351 then
 			api.sendMessage(msg.chat.id, 'My mechanic is here!')
@@ -140,48 +140,16 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'NuteNuteNutella! I am hungry.. Feed me, bella! (and feel free to call for me. You know the way, right.. kick and bans <3)')
 			return
 		end
-		if msg.added.id == 218056872 then
-			api.sendMessage(msg.chat.id, "Welcome, Godfather. Here's your Fedora, Tommy Gun, and ban offers nobody can refuse.")
+		if msg.added.id == 263451571 then
+			api.sendMessage(msg.chat.id, 'The Node Queen is here! This Vixen is ready to slay.')
 			return
 		end
-		if msg.added.id == 213947461 then
-			api.sendMessage(msg.chat.id, "Welcome, Godmother. *plays piano* Speak softly, miss, and carry this: your banpistol")
+		if msg.added.id == 81772130 then
+			api.sendMessage(msg.chat.id, 'Your a bad admin. Be a good admin - Budi')
 			return
 		end
-		if msg.added.id == 159289055 then
-			api.sendMessage(msg.chat.id, "Shit, I really don't know...")
-			return
-        end
-        if msg.added.id == 81772130 then
-            api.sendMessage(msg.chat.id, "Your a bad admin. Be a good admin - Budi")
-            return
-        end
-        if msg.added.id == 263451571 then
-            api.sendMessage(msg.chat.id, 'The Node Queen is here! This Vixen is ready to slay.')
-            return
-        end
-        if msg.added.id == 221962247 then
-            api.sendMessage(msg.chat.id, "Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.")
-            return
-        end
-		if msg.added.id == 252424970 then
-			api.sendMessage(msg.chat.id, "Sheryl is here... I swear I will get her a kick immunity.")
-			return
-		end
-		if msg.added.id == 36702373 then
-			api.sendMessage(msg.chat.id, "Someone has a firestone? Cos Ponyta should evolve")
-			return
-		end
-		if msg.added.id == 106665913 then
-			api.sendMessage(msg.chat.id, "This is a known bug. No need to report.")
-			return
-		end
-		if msg.added.id == 96487504 then
-			api.sendMessage(msg.chat.id, "IT'S DIPPY!!!! Oh wait no...:((")
-			return
-		end
-		if msg.added.id == 33517996 then
-			api.sendMessage(msg.chat.id, "Hey Grunkle, where are Dippy and Mabel?")
+		if msg.added.id == 221962247 then
+			api.sendMessage(msg.chat.id, 'Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.')
 			return
 		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
@@ -209,12 +177,6 @@ local action = function(msg, blocks, ln)
 	
 	if blocks[1] == 'removed' then
 		if msg.remover and msg.removed then
-			--First commandment of Daniel: 
-			--Thou shalt not add custom leave messages
-			--if msg.removed.id == 81772130 then
-			--	api.sendMessage(msg.chat.id, "Yayy he is gone, although tbh I will miss him. RIP @benthecat");
-			--end
-			
 			if msg.remover.id ~= msg.removed.id and msg.remover.id ~= bot.id then
 				local action
 				if msg.chat.type == 'supergroup' then
