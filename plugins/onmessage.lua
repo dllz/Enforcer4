@@ -42,7 +42,7 @@ pre_process = function(msg, ln)
         if (os.time() - msg.date) < 60 then
 			db:setex(spamhash, max_time, msgs+1)
 		end
-        if msgs > max_msgs then
+        if msgs == max_msgs+1 then
 			if msg.fromadmin then
 			else
 				local status = db:hget('chat:'..msg.chat.id..':settings', 'Flood') or 'yes'
