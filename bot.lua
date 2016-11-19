@@ -113,7 +113,7 @@ local function collect_stats(msg)
 		if msg.from and msg.from.id then
 			db:hset('chat:'..msg.chat.id..':userlast', msg.from.id, os.time()) --last message for each user
 		end
-		db:hset('chat:'..msg.chat.id..':chatlast', os.time())
+		db:set('chat:'..msg.chat.id..':chatlast', os.time())
 	end
 	
 	--user stats
