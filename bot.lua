@@ -140,7 +140,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 		return
 	end
 	
-	if msg.date < os.time() - 20 then return end -- Do not process old messages.
+	if msg.date < os.time() - 600 then return end -- Do not process old messages.
 	if not msg.text then msg.text = msg.caption or '' end
 	
 	msg.normal_group = false
