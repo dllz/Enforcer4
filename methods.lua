@@ -82,7 +82,7 @@ local function getUpdates(offset)
 	if offset then
 		url = url .. '&offset=' .. offset
 	end
-
+	print("getting updates")
 	return sendRequest(url)
 
 end
