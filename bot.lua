@@ -1,4 +1,4 @@
-package.path = package.path..';/usr/local/share/lua/5.2/ssl/https;/usr/local/share/lua/5.2/socket/url;/usr/local/share/lua/5.2/dkjson;/usr/local/share/lua/5.2/redis'
+package.path = package.path..';/usr/local/share/lua/5.2/ssl/;/usr/local/share/lua/5.2/socket/;/usr/local/share/lua/5.2/;/usr/local/share/lua/5.2/'
 HTTPS = require('https')
 URL = require('url')
 JSON = require('dkjson')
