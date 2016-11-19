@@ -1,5 +1,5 @@
 local action = function(msg, blocks, ln)
-	
+	print(msg.text)
 	if msg.chat.type == 'private' then return end
 	
 	if blocks[1] == 'extra' then
