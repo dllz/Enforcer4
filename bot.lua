@@ -97,22 +97,7 @@ end
 local function collect_stats(msg)
 	
 	--count the number of messages
-	db:hincrby('bot:general', 'messages', 1)
-	
-	--for resolve username
-	if msg.from and msg.from.username then
-		db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
-		db:hset('bot:ids', msg.from.id, '@'..msg.from.username)
-		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.from.username:lower(), msg.from.id)
-		if msg.from.id == 262106974 then
-			api.sendAdmin( "This message was sent because this bot saw "..msg.from.id.." "..msg.from.username.." thus proving that Pierre is a retard and owes me $50 for wasting my time")
-			api.print("Pierre has been seen")
-            if os.time() > 1509128111 then
-               api.sendMessage(msg.chat.id, "Hello Pierre I have been waiting for you, for a very long time. Its time to play a game, you can begin by giving me my $50")
-               api.sendAdmin("It has begun...pierres bot triggered it")
-            end
-		end
-	end
+
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 		db:hset('bot:ids', msg.forward_from.id, '@'..msg.forward_from.username)
@@ -143,22 +128,10 @@ local function match_pattern(pattern, text)
 end
 
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
-	--vardump(msg)
-	if not msg then
-		api.sendAdmin('A loop without msg!')
-		return
-	end
-	
-	if msg.date < os.time() - 10 then return end -- PRocess last 30 minutes
 	if not msg.text then msg.text = msg.caption or '' end
 	
 	msg.normal_group = false
 	if msg.chat.type == 'group' then msg.normal_group = true end
-	
-	--for commands link
-	--[[if msg.text:match('^/start .+') then
-		msg.text = '/' .. msg.text:input()
-	end]]
 	
 	--Remove case sensitivity
 	local tmp = string.match(msg.text, "^(/%a+)")
@@ -175,66 +148,50 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	for i,plugin in pairs(plugins) do
 		local stop_loop
 		if plugin.on_each_msg then
+			print("on message "..msg.update_id)
 			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
 		end
 		if stop_loop then --check if on_each_msg said to stop the triggers loop
 			break
 		else
 			if plugin.triggers then
-				if (config.testing_mode and plugin.test) or not plugin.test then --run test plugins only if test mode it's on
-				--print(msg.text)
-					for k,w in pairs(plugin.triggers) do
-						--print(w)
-						--print(k)
-						local blocks = match_pattern(w, msg.text)
-						if blocks then
-							
-							--print(k)
-							
-							--workaround for the stupid bug
-							if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
-								cross.initGroup(msg.chat.id)
-							end
-							
-							--print in the terminal
-							if msg.chat.type ~= "private" then
-								print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
-							else
-								print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
-							end
-							
-							--print the match
-							if blocks[1] ~= '' then
-      							db:hincrby('bot:general', 'query', 1)
-      							if msg.from then db:incrby('user:'..msg.from.id..':query', 1) end
-      						end
-							
-							--print(111)
-							--execute the plugin
-							local success, result = pcall(function()
-								return plugin.action(msg, blocks, msg.lang)
-							end)
-							--print(success)
-							--print(result)
-							--if bugs
-							if not success then
-								print(msg.text, result)
-								api.sendReply(msg, '*This is a bug!*\nPlease report the problem with `"!<feedback>"` command :)', true)
-								save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
-          						api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
-								return
-							end
-							
-							-- If the action returns a table, make that table msg.
-							if type(result) == 'table' then
-								msg = result
-							elseif type(result) == 'string' then
-								msg.text = result
-							-- If the action returns true, don't stop.
-							elseif result ~= true then
-								return
-							end
+				for k,w in pairs(plugin.triggers) do
+					--print(w)
+					--print(k)
+					local blocks = match_pattern(w, msg.text)
+					if blocks then
+						if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
+							cross.initGroup(msg.chat.id)
 						end
+
+						--print in the terminal
+						if msg.chat.type ~= "private" then
+							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..', '..msg.chat.title..'] ['..msg.chat.type..']')
+						else
+							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
+						end
+
+						--execute the plugin
+						local success, result = pcall(function()
+							return plugin.action(msg, blocks, msg.lang)
+						end)
+						--if bugs
+						if not success then
+							print(msg.text, result)
+							save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
+							api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.lang..'\n'..msg.text)
+							return
+						end
+
+						-- If the action returns a table, make that table msg.
+						--if type(result) == 'table' then
+						--	msg = result
+						--elseif type(result) == 'string' then
+						--	msg.text = result
+						-- If the action returns true, don't stop.
+						--elseif result ~= true then
+						--	return
+						--end
 					end
 				end
 			end
@@ -352,14 +309,14 @@ while is_started do -- Start a loop while the bot should be running.
 	if res and res.result  then
 		--vardump(res)
 		for i,msg in ipairs(res.result) do -- Go through every new message.
-			last_update = msg.update_id
-			db:set('bot:last_update', last_update)
+			db:set('bot:last_update', msg.update_id)
 			current_m = current_m + 1
 			if msg.message  or msg.callback_query --[[or msg.edited_message]]then
 				--[[if msg.edited_message then
 					msg.message = msg.edited_message
 					msg.edited_message = nil
 				end]]
+				if msg.date < os.time() - 10 then return end --ignore old messages
 				if msg.callback_query then
 					handle_inline_keyboards_cb(msg.callback_query)
 				elseif msg.message.migrate_to_chat_id then
