@@ -306,26 +306,28 @@ while is_started do -- Start a loop while the bot should be running.
 			last_update = msg.update_id
 			db:set('bot:last_update', last_update)
 			current_m = current_m + 1
-			if msg.message  or msg.callback_query --[[or msg.edited_message]]then
+			if msg.message  or msg.callback_query --[[or msg.edited_message]] then
 				--[[if msg.edited_message then
 					msg.message = msg.edited_message
 					msg.edited_message = nil
 				end]]
-				if msg.message.date < os.time() - 15 then return end
-				if msg.callback_query then
-					handle_inline_keyboards_cb(msg.callback_query)
-				elseif msg.message.migrate_to_chat_id then
-					to_supergroup(msg.message)
-				elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
-					service_to_message(msg.message)
-				elseif msg.message.photo or msg.message.video or msg.message.document or msg.message.voice or msg.message.audio or msg.message.sticker or msg.message.entities then
-					media_to_msg(msg.message)
-				elseif msg.message.forward_from then
-					forward_to_msg(msg.message)
-				elseif msg.message.reply_to_message then
-					rethink_reply(msg.message)
-				else
-					on_msg_receive(msg.message)
+				if msg.message.date < os.time() - 15 then
+
+					if msg.callback_query then
+						handle_inline_keyboards_cb(msg.callback_query)
+					elseif msg.message.migrate_to_chat_id then
+						to_supergroup(msg.message)
+					elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
+						service_to_message(msg.message)
+					elseif msg.message.photo or msg.message.video or msg.message.document or msg.message.voice or msg.message.audio or msg.message.sticker or msg.message.entities then
+						media_to_msg(msg.message)
+					elseif msg.message.forward_from then
+						forward_to_msg(msg.message)
+					elseif msg.message.reply_to_message then
+						rethink_reply(msg.message)
+					else
+						on_msg_receive(msg.message)
+					end
 				end
 			end
 		end
