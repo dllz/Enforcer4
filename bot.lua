@@ -3,7 +3,8 @@ HTTPS = require('ssl.https')
 URL = require('socket.url')
 JSON = require('dkjson')
 redis = require('redis')
-local threads = require('torch/extra/threads/threads')
+package.path = package.path..';~/torch/extra/threads'
+local threads = require('threads')
 clr = require 'term.colors'
 db = Redis.connect('127.0.0.1', 6379)
 --db:select(0)
