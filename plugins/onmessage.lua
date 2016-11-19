@@ -27,7 +27,7 @@ local function is_blocked(id)
 end
 
 pre_process = function(msg, ln)
-    
+    msg.fromadmin = is_mod(msg)
     local msg_type = 'text'
     if msg.media then msg_type = msg.text:gsub('###', '') end
     if not is_ignored(msg.chat.id, msg_type) then
@@ -43,7 +43,7 @@ pre_process = function(msg, ln)
 			db:setex(spamhash, max_time, msgs+1)
 		end
         if msgs > max_msgs then
-			if is_mod(msg) then
+			if msg.fromadmin then
 			else
 				local status = db:hget('chat:'..msg.chat.id..':settings', 'Flood') or 'yes'
 				--how flood on/off works: yes->yes, antiflood is diabled. no->no, anti flood is not disbaled
@@ -85,7 +85,7 @@ pre_process = function(msg, ln)
     end
     
     if msg.media and not(msg.chat.type == 'private') and not msg.cb then
-        if is_mod(msg) then
+        if msg.fromadmin then
 		else
 			local name = msg.from.first_name
 			if msg.from.username then name = name..' (@'..msg.from.username..')' end
@@ -127,7 +127,7 @@ pre_process = function(msg, ln)
     
     local rtl_status = (db:hget('chat:'..msg.chat.id..':char', 'Rtl')) or 'allowed'
     if rtl_status == 'kick' or rtl_status == 'ban' then
-		if is_mod(msg) then
+		if msg.fromadmin then
 		else
 			local name = msg.from.first_name
 			if msg.from.username then name = name..' (@'..msg.from.username..')' end
@@ -157,7 +157,7 @@ pre_process = function(msg, ln)
     end
     
     if msg.text and msg.text:find('([\216-\219][\128-\191])') then
-		if is_mod(msg) then
+		if msg.fromadmin then
 		else
 			local arab_status = (db:hget('chat:'..msg.chat.id..':char', 'Arab')) or 'allowed'
 			if arab_status == 'kick' or arab_status == 'ban' then
@@ -212,7 +212,7 @@ pre_process = function(msg, ln)
 		local seenSupport = db:hget('globalBan:'..msg.from.id, 'seen')
 		--end 
 		if isBanned == '1' then
-			if is_mod(msg) then
+			if msg.fromadmin then
 			else
 				if msg.chat.id ~= support then
 					api.banUser(msg.chat.id, msg.from.id, msg.normal_group, ln)
