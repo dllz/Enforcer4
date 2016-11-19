@@ -311,8 +311,7 @@ while is_started do -- Start a loop while the bot should be running.
 					msg.message = msg.edited_message
 					msg.edited_message = nil
 				end]]
-				if msg.message.date < os.time() - 15 then
-
+				--if msg.message.date < os.time() - 15 then
 					if msg.callback_query then
 						handle_inline_keyboards_cb(msg.callback_query)
 					elseif msg.message.migrate_to_chat_id then
@@ -328,7 +327,7 @@ while is_started do -- Start a loop while the bot should be running.
 					else
 						on_msg_receive(msg.message)
 					end
-				end
+				--end
 			end
 		end
 	else
