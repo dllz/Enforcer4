@@ -305,12 +305,10 @@ while is_started do -- Start a loop while the bot should be running.
 		for i,msg in ipairs(res.result) do -- Go through every new message.
 			last_update = msg.update_id
 			current_m = current_m + 1
-			if msg.message  or msg.callback_query --[[or msg.edited_message]] then
+			if msg.message --[[or msg.edited_message]] then
 				if msg.message.date > os.time() - 15 then
 					db:set('bot:last_update', last_update)
-					if msg.callback_query then
-						handle_inline_keyboards_cb(msg.callback_query)
-					elseif msg.message.migrate_to_chat_id then
+					if msg.message.migrate_to_chat_id then
 						to_supergroup(msg.message)
 					elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
 						service_to_message(msg.message)
@@ -324,6 +322,8 @@ while is_started do -- Start a loop while the bot should be running.
 						on_msg_receive(msg.message)
 					end
 				end
+			elseif msg.callback_query then
+				handle_inline_keyboards_cb(msg.callback_query)
 			end
 		end
 	else
