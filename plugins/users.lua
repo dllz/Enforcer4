@@ -1,10 +1,10 @@
 local function do_keybaord_credits()
 	local keyboard = {}
-    keyboard.inline_keyboard = {
-    	{
-    		{text = 'Channel', url = 'https://telegram.me/'..config.channel:gsub('@', '')},
-    		{text = 'GitHub', url = 'https://github.com/BladeZero/GroupButler'},
-    		{text = 'Get Support', url = 'https://telegram.me/werewolfsupport'},
+	keyboard.inline_keyboard = {
+		{
+			{text = 'Channel', url = 'https://telegram.me/'..config.channel:gsub('@', '')},
+			{text = 'GitHub', url = 'https://github.com/BladeZero/GroupButler'},
+			{text = 'Get Support', url = 'https://telegram.me/werewolfsupport'},
 		}
 	}
 	return keyboard
@@ -78,6 +78,7 @@ local function get_ban_info(user_id, chat_id, title, ln)
 	--end
 	--end
 end
+
 local function do_keyboard_userinfo(user_id, ln)
 	local keyboard = {
 		inline_keyboard = {
@@ -85,7 +86,7 @@ local function do_keyboard_userinfo(user_id, ln)
 			{{text ='?? Ban', callback_data = 'userbutton:banuser:'..user_id}},
 		}
 	}
-	
+
 	return keyboard
 end
 
@@ -125,70 +126,77 @@ local action = function(msg, blocks, ln)
 		else
 			api.sendReply(msg, "Please reply to a message to save it")
 		end
-    elseif blocks[1] == 'adminlist' then
-    	if msg.chat.type == 'private' then return end
-    	local no_usernames
-    	local send_reply = true
-    	if is_locked(msg, 'Modlist') then
-    		if is_mod(msg) then
-        		no_usernames = true
-        	else
-        		no_usernames = false
-        		send_reply = false
-        	end
-        else
-            no_usernames = true
-        end
-    	local out
-        local creator, adminlist = cross.getModlist(msg.chat.id, no_usernames)
-        out = make_text(lang[ln].mod.modlist, creator, adminlist)
-        if not send_reply then
-        	api.sendMessage(msg.from.id, out, true)
-        else
-            api.sendReply(msg, out, true)
-        end
-    elseif blocks[1] == 'status' then
-    	if msg.chat.type == 'private' then return end
-    	if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
-    		local user_id
-    		if blocks[2]:match('%d+$') then
-    			user_id = blocks[2]
-    		else
-    			user_id = res_user_group(blocks[2], msg.chat.id)
-    		end
-    		if not user_id then
-		 		api.sendReply(msg, lang[ln].bonus.no_user, true)
-		 	else
-		 		local res = api.getChatMember(msg.chat.id, user_id)
-		 		if not res then
-		 			api.sendReply(msg, lang[ln].status.unknown)
-		 			return
-		 		end
-		 		local status = res.result.status
+	elseif blocks[1] == 'adminlist' then
+		if msg.chat.type == 'private' then return end
+		local no_usernames
+		local send_reply = true
+		if is_locked(msg, 'Modlist') then
+			if is_mod(msg) then
+				no_usernames = true
+			else
+				no_usernames = false
+				send_reply = false
+			end
+		else
+			no_usernames = true
+		end
+		local out
+		local creator, adminlist = cross.getModlist(msg.chat.id, no_usernames)
+		out = make_text(lang[ln].mod.modlist, creator, adminlist)
+		if not send_reply then
+			local res, code = api.sendMessage(msg.from.id, out, true)
+			if code == 403 then
+				api.sendReply(msg, "Please start @werewolfbutlerbot and try this command again")
+			end
+		else
+			api.sendReply(msg, out, true)
+		end
+	elseif blocks[1] == 'status' then
+		if msg.chat.type == 'private' then return end
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
+			local user_id
+			if blocks[2]:match('%d+$') then
+				user_id = blocks[2]
+			else
+				user_id = res_user_group(blocks[2], msg.chat.id)
+			end
+			if not user_id then
+				api.sendReply(msg, lang[ln].bonus.no_user, true)
+			else
+				local res = api.getChatMember(msg.chat.id, user_id)
+				if not res then
+					api.sendReply(msg, lang[ln].status.unknown)
+					return
+				end
+				local status = res.result.status
 				local name = res.result.user.first_name
 				if res.result.user.username then name = name..' (@'..res.result.user.username..')' end
 				if msg.chat.type == 'group' and is_banned(msg.chat.id, user_id) then
 					status = 'kicked'
 				end
-		 		local text = make_text(lang[ln].status[status], name)
-		 		api.sendReply(msg, text)
-		 	end
-	 	end
- 	elseif blocks[1] == 'id' then
- 		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
+				reason = db:hget('chat:'..msg.chat.id..':bannedlist:'..user_id, 'why')
+				if reason ~= nil then
+					name = name.."\n"..reason
+				end
+				local text = make_text(lang[ln].status[status], name)
+				api.sendReply(msg, text)
+			end
+		end
+	elseif blocks[1] == 'id' then
+		if is_mod(msg) or config.admin.superAdmins[msg.from.id] then
 			local id
 			local user = ''
 			if msg.reply then
-				if msg.reply.forward_from then 
+				if msg.reply.forward_from then
 					id = msg.reply.forward_from.id
 					name = msg.reply.forward_from.first_name
-					if msg.reply.forward_from.username ~= nil then 
+					if msg.reply.forward_from.username ~= nil then
 						user = msg.reply.forward_from.username
 					end
-				else	
+				else
 					id = msg.reply.from.id
 					name = msg.reply.from.first_name
-					if msg.reply.from.username ~= nil then 
+					if msg.reply.from.username ~= nil then
 						user = msg.reply.from.username
 					end
 				end
@@ -199,124 +207,124 @@ local action = function(msg, blocks, ln)
 					user =  msg.chat.username
 				end
 			end
-			if user ~= '' then 
+			if user ~= '' then
 				local res, code = api.sendReply(msg, '`'..id..'`'..'\n`'..name..'`'..'\n@'..user, true)
 				if not res then
 					api.sendMessage(config.log_chat, user)
 					api.sendMessage(config.log_chat, dump(code)..', '..dump(res))
-				end 
+				end
 			else
 				local res, code = api.sendReply(msg, '`'..id..'`'..'\n`'..name..'`', true)
 				if not res then
 					api.sendMessage(config.log_chat, user)
 					api.sendMessage(config.log_chat, dump(code)..', '..dump(res))
-				end 
-			end 
+				end
+			end
 		end
- 	elseif blocks[1] == 'settings' then
-        
-        if msg.chat.type == 'private' then return end
-        
-        local message = cross.getSettings(msg.chat.id, ln)
-        api.sendReply(msg, message, true)
-    elseif blocks[1] == 'welcome' then
-        
-        if msg.chat.type == 'private' or not is_mod(msg) then return end
-        
-        local input = blocks[2]
-    
-        --ignore if not input text and not reply
-        if not input and not msg.reply then
-            api.sendReply(msg, make_text(lang[ln].settings.welcome.no_input), false)
-            return
-        end
-        
-        local hash = 'chat:'..msg.chat.id..':welcome'
+	elseif blocks[1] == 'settings' then
+
+		if msg.chat.type == 'private' then return end
+
+		local message = cross.getSettings(msg.chat.id, ln)
+		api.sendReply(msg, message, true)
+	elseif blocks[1] == 'welcome' then
+
+		if msg.chat.type == 'private' or not is_mod(msg) then return end
+
+		local input = blocks[2]
+
+		--ignore if not input text and not reply
+		if not input and not msg.reply then
+			api.sendReply(msg, make_text(lang[ln].settings.welcome.no_input), false)
+			return
+		end
+
+		local hash = 'chat:'..msg.chat.id..':welcome'
 		db:hset(hash, 'hasmedia', 'false')
-        if not input and msg.reply then
-            local replied_to = get_media_type(msg.reply)
-            if replied_to == 'gif' then
-                local file_id-- = msg[replied_to].file_id
+		if not input and msg.reply then
+			local replied_to = get_media_type(msg.reply)
+			if replied_to == 'gif' then
+				local file_id-- = msg[replied_to].file_id
 				file_id = msg.reply.document.file_id
-                db:hset(hash, 'type', 'media')
-                db:hset(hash, 'content', file_id)
-                api.sendReply(msg, lang[ln].settings.welcome.media_setted..'`'..replied_to..'`', true)
-            else
-                api.sendReply(msg, lang[ln].settings.welcome.reply_media, true)
-            end
-            return
-        end
-        
-        if msg.reply and input then 
-	    	local replied_to = get_media_type(msg.reply)
-            if replied_to == 'sticker' or replied_to == 'gif' then
-                local file_id-- = msg[replied_to].file_id
-                if replied_to == 'sticker' then
-                    file_id = msg.reply.sticker.file_id
-                else
-                    file_id = msg.reply.document.file_id
-                end
-                db:hset(hash, 'hasmedia', 'true')
-                db:hset(hash, 'media', file_id)
+				db:hset(hash, 'type', 'media')
+				db:hset(hash, 'content', file_id)
+				api.sendReply(msg, lang[ln].settings.welcome.media_setted..'`'..replied_to..'`', true)
+			else
+				api.sendReply(msg, lang[ln].settings.welcome.reply_media, true)
+			end
+			return
+		end
+
+		if msg.reply and input then
+			local replied_to = get_media_type(msg.reply)
+			if replied_to == 'sticker' or replied_to == 'gif' then
+				local file_id-- = msg[replied_to].file_id
+				if replied_to == 'sticker' then
+					file_id = msg.reply.sticker.file_id
+				else
+					file_id = msg.reply.document.file_id
+				end
+				db:hset(hash, 'hasmedia', 'true')
+				db:hset(hash, 'media', file_id)
 				print("Welcome with gif saved")
-            end
-		end 
-        
-        --change welcome settings
-        if input == 'a' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'a')
-            api.sendReply(msg, lang[ln].settings.welcome.a, true)
-        elseif input == 'r' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'r')
-            api.sendReply(msg, lang[ln].settings.welcome.r, true)
-        elseif input == 'm' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'm')
-            api.sendReply(msg, lang[ln].settings.welcome.m, true)
-        elseif input == 'ar' or input == 'ra' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'ra')
-            api.sendReply(msg, lang[ln].settings.welcome.ra, true)
-        elseif input == 'mr' or input == 'rm' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'rm')
-            api.sendReply(msg, lang[ln].settings.welcome.rm, true)
-        elseif input == 'am' or input == 'ma' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'am')
-            api.sendReply(msg, lang[ln].settings.welcome.am, true)
-        elseif input == 'ram' or input == 'rma' or input == 'arm' or input == 'amr' or input == 'mra' or input == 'mar' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'ram')
-            api.sendReply(msg, lang[ln].settings.welcome.ram, true)
-        elseif input == 'no' then
-            db:hset(hash, 'type', 'composed')
-            db:hset(hash, 'content', 'no')
-            api.sendReply(msg, lang[ln].settings.welcome.no, true)
-        else
-            db:hset(hash, 'type', 'custom')
-            db:hset(hash, 'content', input)
-            local res, code = api.sendReply(msg, make_text(lang[ln].settings.welcome.custom, input), true)
-            if not res then
-                db:hset(hash, 'type', 'composed') --if wrong markdown, remove 'custom' again
-                db:hset(hash, 'content', 'no')
-                if code == 118 then
-				    api.sendMessage(msg.chat.id, lang[ln].bonus.too_long)
-			    else
-				    api.sendMessage(msg.chat.id, lang[ln].breaks_markdown, true)
-			    end
-            else
-                local id = res.result.message_id
-                api.editMessageText(msg.chat.id, id, lang[ln].settings.welcome.custom_setted, false, true)
-            end
-        end
-    elseif blocks[1] == 'export' then
-    	if msg.chat.type ~= 'private' then return end
-    	if blocks[2] == 'ban' then
-    		if is_bot_owner(msg) then
-    			local users = db:hvals('bot:usernames')
+			end
+		end
+
+		--change welcome settings
+		if input == 'a' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'a')
+			api.sendReply(msg, lang[ln].settings.welcome.a, true)
+		elseif input == 'r' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'r')
+			api.sendReply(msg, lang[ln].settings.welcome.r, true)
+		elseif input == 'm' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'm')
+			api.sendReply(msg, lang[ln].settings.welcome.m, true)
+		elseif input == 'ar' or input == 'ra' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'ra')
+			api.sendReply(msg, lang[ln].settings.welcome.ra, true)
+		elseif input == 'mr' or input == 'rm' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'rm')
+			api.sendReply(msg, lang[ln].settings.welcome.rm, true)
+		elseif input == 'am' or input == 'ma' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'am')
+			api.sendReply(msg, lang[ln].settings.welcome.am, true)
+		elseif input == 'ram' or input == 'rma' or input == 'arm' or input == 'amr' or input == 'mra' or input == 'mar' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'ram')
+			api.sendReply(msg, lang[ln].settings.welcome.ram, true)
+		elseif input == 'no' then
+			db:hset(hash, 'type', 'composed')
+			db:hset(hash, 'content', 'no')
+			api.sendReply(msg, lang[ln].settings.welcome.no, true)
+		else
+			db:hset(hash, 'type', 'custom')
+			db:hset(hash, 'content', input)
+			local res, code = api.sendReply(msg, make_text(lang[ln].settings.welcome.custom, input), true)
+			if not res then
+				db:hset(hash, 'type', 'composed') --if wrong markdown, remove 'custom' again
+				db:hset(hash, 'content', 'no')
+				if code == 118 then
+					api.sendMessage(msg.chat.id, lang[ln].bonus.too_long)
+				else
+					api.sendMessage(msg.chat.id, lang[ln].breaks_markdown, true)
+				end
+			else
+				local id = res.result.message_id
+				api.editMessageText(msg.chat.id, id, lang[ln].settings.welcome.custom_setted, false, true)
+			end
+		end
+	elseif blocks[1] == 'export' then
+		if msg.chat.type ~= 'private' then return end
+		if blocks[2] == 'ban' then
+			if is_bot_owner(msg) then
+				local users = db:hvals('bot:usernames')
 				users = remove_duplicates(users)
 				local final_table = {}
 				for i,id in pairs(users) do
@@ -366,10 +374,10 @@ local action = function(msg, blocks, ln)
 				else
 					local i = 0
 					for user_id, info in pairs(ban_info) do
-						
+
 						--[[        SUM MODE
 						local save_body = {} --user info to be saved in redis
-						
+
 						--get the already saved info
 						local old_info = db:hgetall('ban:'..user_id)
 						if old_info and next(old_info) then
@@ -377,20 +385,20 @@ local action = function(msg, blocks, ln)
 								save_body[field] = tonumber(count)
 							end
 						end
-						
+
 						--add to the already saved info the new imported info
 						for key, n in pairs(info) do
 							local old_value = save_body[key] or 0
 							save_body[key] = old_value + tonumber(n)
 						end
-						
+
 						--save on redis
 						if next(save_body) then
 							for key,val in pairs(save_body) do
 								db:hset('ban:'..user_id, key, val)
 							end
 						end]]
-						
+
 						--save on redis
 						if next(info) then
 							for field,count in pairs(info) do
@@ -406,9 +414,9 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'support' then
 		if config.help_group and config.help_group ~= '' then
-			if msg.reply then 
-			 	msgToReplyTo = msg.reply.message_id
-			else 
+			if msg.reply then
+				msgToReplyTo = msg.reply.message_id
+			else
 				msgToReplyTo = msg.message_id
 			end
 			api.sendMessage(msg.chat.id, '[Click here to get help from the support group]('..config.help_group..')', true, msgToReplyTo)
@@ -421,25 +429,25 @@ local action = function(msg, blocks, ln)
 			end
 			return
 		end
-		
+
 		local user_id = get_user_id(msg, blocks)
-		
+
 		if is_bot_owner(msg) and msg.reply and not msg.cb then --does this mean only global admins can get user by replying to a forwarded message??
-			if msg.reply.forward_from then
-				user_id = msg.reply.forward_from.id
-			end
+		if msg.reply.forward_from then
+			user_id = msg.reply.forward_from.id
 		end
-		
+		end
+
 		if not user_id then
 			api.sendReply(msg, lang[ln].bonus.no_user, true)
-		 	return
+			return
 		end
 		-----------------------------------------------------------------------------
-		
+
 		local keyboard = do_keyboard_userinfo(user_id, ln)
-		
-		local text = get_userinfo(user_id, msg.chat.id, ln)
-		
+
+		local text = get_userinfo(user_id, msg.chat.id, msg.chat.title, ln)
+
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
 		else
@@ -447,7 +455,7 @@ local action = function(msg, blocks, ln)
 		end
 	elseif blocks[1] == 'me' then
 		local chat_id = msg.chat.id
-		local chat_name = ''
+		local chat_name = nil
 		if msg.chat.type == 'private' then
 			chat_id = nil
 		else
@@ -465,14 +473,15 @@ local action = function(msg, blocks, ln)
 				api.sendReply(msg, lang[ln].bonus.general_pm, true)
 			end
 		end
+
 	elseif blocks[1] == 'banuser' then
 		if not is_mod(msg) then
-    		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
-    		return
+			api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
+			return
 		end
-		
+
 		local user_id = msg.target_id
-		
+
 		local res, text = api.banUser(msg.chat.id, user_id, msg.normal_group, ln)
 		if res then
 			cross.saveBan(user_id, 'ban')
@@ -481,15 +490,17 @@ local action = function(msg, blocks, ln)
 		api.editMessageText(msg.chat.id, msg.message_id, text, false, true)
 	elseif blocks[1] == 'remwarns' then
 		if not is_mod(msg) then
-    		api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
-    		return
+			api.answerCallbackQuery(msg.cb_id, lang[ln].not_mod:mEscape_hard())
+			return
 		end
 		db:hdel('chat:'..msg.chat.id..':warns', msg.target_id)
 		db:hdel('chat:'..msg.chat.id..':mediawarn', msg.target_id)
-        
-        api.editMessageText(msg.chat.id, msg.message_id, lang[ln].warn.nowarn..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
-    elseif blocks[1] == 'ping' then
+
+		api.editMessageText(msg.chat.id, msg.message_id, lang[ln].warn.nowarn..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
+	elseif blocks[1] == 'ping' then
 		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
+	elseif blocks[1] == 'enforce' then
+		api.sendReply(msg, '/ me now')
 	end
 end
 
@@ -508,13 +519,13 @@ return {
 		'^/(welcome) (.*)$',
 		'^/(welcome)$',
 		'^/(user)$',
-        '^/(user) (.+)$', --this is to get also /user + text mention
-        '^/(user) (@[%w_]+)$',
+		'^/(user) (.+)$', --this is to get also /user + text mention
+		'^/(user) (@[%w_]+)$',
 		'^/(user) (%d+)$',
 		'^/(ping)$',
 		'^/(s)$',
 		'^/(me)$',
-		
+
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
 	}
