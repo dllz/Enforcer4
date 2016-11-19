@@ -357,11 +357,12 @@ local action = function(msg, blocks, ln)
 					counter = db:hget(hash14, '#Admin')
 					reporter = db:hget(hash14, 'Reporter')
 					repID = db:hget(hash14, 'repID')
+					local text
 					--print("counter", counter)
 					if reporter ~= nil then
-						local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
+						text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')\nIt was reported by: '..reporter
 					else
-						local text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')'
+						text = 'This has been solved by: '..solvedBy..'\n'..solvedAt..'\n('..msg.chat.title..')'
 					end
 
 
