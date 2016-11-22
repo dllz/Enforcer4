@@ -43,18 +43,18 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 		--print("MOD ID:"..mods[i])
 		if username ~= nil then
 			if message.reply then
-				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback_data = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback_data = 'kickflag:'..message.chat.id..':'..msg.reply.from.id}},{{text = 'Warn', callback_data = 'warnflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}},{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}})
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: #r'..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback_data = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback_data = 'kickflag:'..message.chat.id..':'..msg.reply.from.id}},{{text = 'Warn', callback_data = 'warnflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}},{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}})
 				--temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			else
-				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}},{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}})
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: #r'..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}},{{text = 'Go to message', url = 'http://telegram.me/'..username..'/'..reportid}}}})
 				--temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			end
 		else
 			if message.reply then
-				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback_data = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback_data = 'kickflag:'..message.chat.id..':'..msg.reply.from.id}},{{text = 'Warn', callback_data = 'warnflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: #r'..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Ban', callback_data = 'banflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Kick', callback_data = 'kickflag:'..message.chat.id..':'..msg.reply.from.id}},{{text = 'Warn', callback_data = 'warnflag:'..message.chat.id..':'..msg.reply.from.id},{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 				--temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			else
-				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: '..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
+				temp, code = api.sendKeyboard(mods[i], reporter..'\n\n'..chat_title..'\nReport ID: #r'..reportid..'\n#Unsolved', {inline_keyboard = {{{text = 'Mark Solved', callback_data = 'solveflag:'..message.chat.id..':'..reportid}}}})
 			end
 		end
 		--print("CODE: ", code)
@@ -147,7 +147,7 @@ local action = function(msg, blocks, ln)
 			if msg.from.username then reporter = reporter..' (@'..msg.from.username..')' end
 			local username = msg.chat.username
 			send_to_admin(mods, msg.chat.id, msg_id, reporter, is_by_reply, msg.chat.title, msg, repID, username, msg)
-			api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: '..repID)
+			api.sendReply(msg, lang[ln].flag.reported..'\n#Report ID: #r'..repID)
 		end
 	elseif blocks[1] == 'report' then
 		if is_mod(msg) then
@@ -315,7 +315,7 @@ local action = function(msg, blocks, ln)
 					end
 				end
 			end
-			api.sendMessage(chat, "#Report ID: "..msg_id.." solved by "..msg.chat.id)
+			api.sendMessage(chat, "#Report ID: #r"..msg_id.." solved by "..msg.chat.id)
 			api.answerCallbackQuery(msg.cb_id, "Marked as Solved")
 		elseif alreadyReported == '1' then
 			local solvedTime = db:hget(hash14, 'SolvedAt')
@@ -468,6 +468,7 @@ return {
 		'^/(report) (on)$',
 		'^/(report) (off)$',
 		'^/(solved) (%d+)$',
+		'^/(solved) #r(%d+)$',
 		'^/(solved)',
 		'^/(msgid)',
 
