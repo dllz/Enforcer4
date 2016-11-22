@@ -72,7 +72,7 @@ local function getMe()
 end
 
 local function getUpdates(offset)
-
+	print(clr.reset..clr.red..'['..os.date('%X')..']'..clr.blue..'Getting Updates')
 	local url = BASE_URL .. '/getUpdates?timeout=20'
 
 	if offset then
