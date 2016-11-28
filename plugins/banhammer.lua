@@ -367,7 +367,32 @@ local action = function(msg, blocks, ln)
 					api.sendReply(msg, user..' is rekted', true)
 				end
 			end
-		end
+        end
+
+        if blocks[1] == 'unrekt' then
+            if config.admin.admins[msg.from.id] then
+
+                if msg.reply.forward_from ~= nil then
+                    local forward = msg.reply.forward_from.id
+                    local hash = 'globalBan:'..forward
+                    local mot = blocks[2]
+                    print(forward..mot)
+                    db:hset(hash, 'banned', 0)
+                    db:hset(hash, 'motivation', mot)
+                    db:hset(hash, 'time', os.date('On %A, %d %B %Y\nAt %X'))
+                    api.sendReply(msg, forward..' is unrekted', true)
+                else
+                    local user = msg.reply.from.id
+                    local hash = 'globalBan:'..user
+                    local mot = blocks[2]
+                    print(mot)
+                    db:hset(hash, 'banned', 0)
+                    db:hset(hash, 'motivation', mot)
+                    db:hset(hash, 'time', os.date('%d %B %Y, %X'))
+                    api.sendReply(msg, user..' is unrekted', true)
+                end
+            end
+        end
 	end
 end
 
@@ -389,6 +414,7 @@ return {
 		'^/(unban)',
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
-		'^/(getrekt) ([%w]+)'
+		'^/(getrekt) ([%w]+)',
+        '^/(unrekt) ([%w]+)'
 	}
 }
