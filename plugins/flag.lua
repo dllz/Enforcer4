@@ -127,10 +127,15 @@ local action = function(msg, blocks, ln)
 		else
 			if is_report_blocked(msg) then
 				return
-			end
-			local alreadyFlagged = db:hget('flagged:'..msg.chat.id..':'..msg.message_id, 'solved')
-			print(alreadyFlagged)
-			if alreadyFlagged ~= nil then return end
+            end
+            if msg.reply then
+                local alreadyFlagged = db:hsetnx('flagged:'..msg.chat.id..':'..msg.message_id, 'repliedTo', msg.reply.message_id)
+                if alreadyFlagged == 0 then
+                    print("Message already reported")
+                   return
+                end
+            end
+            print("Unique report")
 			if is_moduser(msg) then return end
 			if msg.reply and ((tonumber(msg.reply.from.id) == tonumber(bot.id)) --[[or is_mod(msg.reply)]]) then
 				return
