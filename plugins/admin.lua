@@ -168,7 +168,6 @@ local action = function(msg, blocks, ln)
 	if blocks[1] == 'rektgroup' then
 		print("Banning Group")
 		if blocks[2] then
-			api.sendMessage(msg.chat.id, "Banning group")
 			db:hset('groupBan:'..blocks[2], 'banned', '1')
 			bot_leave(blocks[2])
 			api.sendReply(msg, blocks[2]..' has been banned')
