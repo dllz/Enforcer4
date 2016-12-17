@@ -166,6 +166,15 @@ local action = function(msg, blocks, ln)
 		if msgs == default_spam_value+1 then
 			return
 		end
+		local joinSpam = 'spam:added:'..msg.chat.id..':'..msg.added.id
+		local msgs = tonumber(db:get(joinSpam)) or 0
+		if msgs == 0 then msgs = 1 end
+		local default_spam_value = 2
+		local max_time = 300
+		db:setex(joinSpam, max_time, msgs+1)
+		if msgs == default_spam_value+1 then
+			return
+		end
 		local text = get_welcome(msg, ln)
 		if text then
 			api.sendMessage(msg.chat.id, text, true)
