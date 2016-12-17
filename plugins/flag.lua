@@ -132,6 +132,7 @@ local action = function(msg, blocks, ln)
                 local alreadyFlagged = db:hsetnx('flagged:'..msg.chat.id, 'repliedTo', msg.reply.message_id)
                 if alreadyFlagged == false then
                     print("Message already reported")
+					api.sendReply(msg, "Already reported")
                    return
                 end
             end
