@@ -24,7 +24,7 @@ local triggers2 = {
 	'^/a(ping redis)$',
 	'^/a(leave) (-%d+)$',
 	'^/a(leave)$',
-	'^/a(rektgroup) (-%d+)$',
+	'^/a(rektgroup) (%-d+)$',
 	'^/a(rektgroup)$',
 	'^/a(post) (.*)$',
 	'^###(forward)',
