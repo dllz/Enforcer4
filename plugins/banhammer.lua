@@ -132,6 +132,7 @@ local action = function(msg, blocks, ln)
 					api.sendReply(msg, banlist, true)
 				else
 					--local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
+					print("Sending Message")
 					local res, code = api.sendReply(msg, banlist)
 					print("Res Dump"..dump(res))
 					print(code)
