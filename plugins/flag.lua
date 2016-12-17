@@ -129,7 +129,8 @@ local action = function(msg, blocks, ln)
 				return
 			end
 			local alreadyFlagged = db:hget('flagged:'..msg.chat.id..':'..msg.message_id, 'solved')
-			if alreadyFlagged == 0 then return end
+			print(alreadyFlagged)
+			if alreadyFlagged ~= nil then return end
 			if is_moduser(msg) then return end
 			if msg.reply and ((tonumber(msg.reply.from.id) == tonumber(bot.id)) --[[or is_mod(msg.reply)]]) then
 				return
