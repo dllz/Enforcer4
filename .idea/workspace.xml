@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="211b611e-8ee4-478a-a80a-4122d01f49dd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/plugins/banhammer.lua" afterPath="$PROJECT_DIR$/plugins/banhammer.lua" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/plugins/users.lua" afterPath="$PROJECT_DIR$/plugins/users.lua" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,21 +28,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="banhammer.lua" pinned="false" current-in-tab="true">
+      <file leaf-file-name="banhammer.lua" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="536">
-              <caret line="307" column="27" lean-forward="false" selection-start-line="307" selection-start-column="27" selection-end-line="307" selection-end-column="27" />
+            <state relative-caret-position="-2074">
+              <caret line="1" column="32" lean-forward="false" selection-start-line="1" selection-start-column="32" selection-end-line="1" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users.lua" pinned="false" current-in-tab="false">
+      <file leaf-file-name="users.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/plugins/users.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4990">
-              <caret line="434" column="13" lean-forward="true" selection-start-line="434" selection-start-column="13" selection-end-line="434" selection-end-column="13" />
+            <state relative-caret-position="638">
+              <caret line="178" column="57" lean-forward="false" selection-start-line="178" selection-start-column="57" selection-end-line="178" selection-end-column="57" />
               <folding />
             </state>
           </provider>
@@ -73,6 +73,7 @@
       <list>
         <option value="$PROJECT_DIR$/plugins/flag.lua" />
         <option value="$PROJECT_DIR$/plugins/banhammer.lua" />
+        <option value="$PROJECT_DIR$/plugins/users.lua" />
       </list>
     </option>
   </component>
@@ -243,7 +244,7 @@
       <updated>1481958920759</updated>
       <workItem from="1481958923716" duration="758000" />
       <workItem from="1481959705271" duration="6449000" />
-      <workItem from="1481972877847" duration="3331000" />
+      <workItem from="1481972877847" duration="4301000" />
     </task>
     <task id="LOCAL-00001" summary="Flagged repeat detection">
       <created>1481966677561</created>
@@ -315,11 +316,18 @@
       <option name="project" value="LOCAL" />
       <updated>1481976541155</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Removed Banlist due to it being api heavy. Please you /status moving forward">
+      <created>1481976553218</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1481976553218</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10538000" />
+    <option name="totallyTimeSpent" value="11508000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="260" y="25" width="1400" height="1000" extended-state="0" />
@@ -401,18 +409,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/users.lua">
+    <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4990">
-          <caret line="434" column="13" lean-forward="true" selection-start-line="434" selection-start-column="13" selection-end-line="434" selection-end-column="13" />
+        <state relative-caret-position="-2074">
+          <caret line="1" column="32" lean-forward="false" selection-start-line="1" selection-start-column="32" selection-end-line="1" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
+    <entry file="file://$PROJECT_DIR$/plugins/users.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="536">
-          <caret line="307" column="27" lean-forward="false" selection-start-line="307" selection-start-column="27" selection-end-line="307" selection-end-column="27" />
+        <state relative-caret-position="638">
+          <caret line="178" column="57" lean-forward="false" selection-start-line="178" selection-start-column="57" selection-end-line="178" selection-end-column="57" />
           <folding />
         </state>
       </provider>
