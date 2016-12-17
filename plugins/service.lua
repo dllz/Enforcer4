@@ -156,8 +156,16 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
 		end
-		
-		
+
+		local addedSpam = 'spam:added:'..msg.chat.id
+		local msgs = tonumber(db:get(addedSpam)) or 0
+		if msgs == 0 then msgs = 1 end
+		local default_spam_value = 5
+		local max_time = 30
+		db:setex(addedSpam, max_time, msgs+1)
+		if msgs == default_spam_value+1 then
+			return
+		end
 		local text = get_welcome(msg, ln)
 		if text then
 			api.sendMessage(msg.chat.id, text, true)
