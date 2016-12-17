@@ -25,6 +25,7 @@ local triggers2 = {
 	'^/a(leave) (-%d+)$',
 	'^/a(leave)$',
 	'^/a(rektgroup) (-%d+)$',
+	'^/a(rektgroup)$',
 	'^/a(post) (.*)$',
 	'^###(forward)',
 	'^/a(reset) (.*)$',
@@ -166,10 +167,14 @@ local action = function(msg, blocks, ln)
 	end
 	if blocks[1] == 'rektgroup' then
 		print("Banning Group")
-		api.sendMessage(msg.chat.id, "Banning group")
-		db:hset('groupBan:'..blocks[2], 'banned', '1')
-        bot_leave(blocks[2])
-		api.sendReply(msg, blocks[2]..' has been banned')
+		if blocks[2] then
+			api.sendMessage(msg.chat.id, "Banning group")
+			db:hset('groupBan:'..blocks[2], 'banned', '1')
+			bot_leave(blocks[2])
+			api.sendReply(msg, blocks[2]..' has been banned')
+		else
+			api.sendReply(msg, "No ID specified")
+		end
 	end
 
 	if blocks[1] == 'editmsg' then
