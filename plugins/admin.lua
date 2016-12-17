@@ -91,7 +91,7 @@ local function bot_leave(chat_id, ln)
 		return 'Check the id, it could be wrong'
 	else
 		db:hincrby('bot:general', 'groups', -1)
-		return 'Chat leaved!'
+		return 'Chat left!'
 	end
 end
 
@@ -165,6 +165,7 @@ local action = function(msg, blocks, ln)
 		end 
 	end
 	if blocks[1] == 'rektgroup' then
+		api.sendMessage(msg.chat.id, "Banning group")
 		db:hset('groupBan:'..blocks[2], 'banned', '1')
         bot_leave(blocks[2])
 		api.sendReply(msg, blocks[2]..' has been banned')
