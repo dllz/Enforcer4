@@ -129,6 +129,7 @@ local action = function(msg, blocks, ln)
    				local banlist, is_empty = getBanList(msg.chat.id, ln)
 				--print(banlist)
    				if is_empty then
+					print("inside is empty")
 					api.sendReply(msg, banlist, true)
 				else
 					--local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
