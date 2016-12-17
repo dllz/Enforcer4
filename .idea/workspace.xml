@@ -32,7 +32,7 @@
         <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="408">
-              <caret line="135" column="30" lean-forward="false" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
+              <caret line="135" column="26" lean-forward="true" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -233,7 +233,7 @@
       <updated>1481958920759</updated>
       <workItem from="1481958923716" duration="758000" />
       <workItem from="1481959705271" duration="6449000" />
-      <workItem from="1481972877847" duration="1778000" />
+      <workItem from="1481972877847" duration="1953000" />
     </task>
     <task id="LOCAL-00001" summary="Flagged repeat detection">
       <created>1481966677561</created>
@@ -256,11 +256,18 @@
       <option name="project" value="LOCAL" />
       <updated>1481974830891</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Reparing banlist&#10;">
+      <created>1481974997646</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1481974997646</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8985000" />
+    <option name="totallyTimeSpent" value="9160000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="260" y="25" width="1400" height="1000" extended-state="0" />
@@ -344,7 +351,7 @@
     <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
-          <caret line="135" column="30" lean-forward="false" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
+          <caret line="135" column="26" lean-forward="true" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
           <folding />
         </state>
       </provider>

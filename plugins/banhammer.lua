@@ -132,9 +132,8 @@ local action = function(msg, blocks, ln)
 					api.sendReply(msg, banlist, true)
 				else
 					local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
-					print(res)
-					print(code)
-					if code == 118 then
+					print("Res Dump"..dump(res))
+					if res == 118 then
 						print("Splitting list")
 						text = {}
 						text = split(banlist)
