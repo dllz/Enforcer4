@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="211b611e-8ee4-478a-a80a-4122d01f49dd" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/plugins/banhammer.lua" afterPath="$PROJECT_DIR$/plugins/banhammer.lua" />
     </list>
@@ -31,8 +32,8 @@
       <file leaf-file-name="banhammer.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="143" column="43" lean-forward="false" selection-start-line="143" selection-start-column="43" selection-end-line="143" selection-end-column="43" />
+            <state relative-caret-position="391">
+              <caret line="134" column="30" lean-forward="false" selection-start-line="134" selection-start-column="30" selection-end-line="134" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -233,7 +234,7 @@
       <updated>1481958920759</updated>
       <workItem from="1481958923716" duration="758000" />
       <workItem from="1481959705271" duration="6449000" />
-      <workItem from="1481972877847" duration="1371000" />
+      <workItem from="1481972877847" duration="1618000" />
     </task>
     <task id="LOCAL-00001" summary="Flagged repeat detection">
       <created>1481966677561</created>
@@ -242,11 +243,18 @@
       <option name="project" value="LOCAL" />
       <updated>1481966677561</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Reparing banlist&#10;">
+      <created>1481974580920</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1481974580920</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8578000" />
+    <option name="totallyTimeSpent" value="8825000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="260" y="25" width="1400" height="1000" extended-state="0" />
@@ -291,7 +299,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Flagged repeat detection" />
-    <option name="LAST_COMMIT_MESSAGE" value="Flagged repeat detection" />
+    <MESSAGE value="Reparing banlist&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reparing banlist&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -328,8 +337,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="143" column="43" lean-forward="false" selection-start-line="143" selection-start-column="43" selection-end-line="143" selection-end-column="43" />
+        <state relative-caret-position="391">
+          <caret line="134" column="30" lean-forward="false" selection-start-line="134" selection-start-column="30" selection-end-line="134" selection-end-column="30" />
           <folding />
         </state>
       </provider>
