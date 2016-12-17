@@ -24,6 +24,7 @@ local triggers2 = {
 	'^/a(ping redis)$',
 	'^/a(leave) (-%d+)$',
 	'^/a(leave)$',
+	'^/a(rektgroup) (-%d+)$',
 	'^/a(post) (.*)$',
 	'^###(forward)',
 	'^/a(reset) (.*)$',
@@ -163,7 +164,12 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.from.id, 'Please send a valid db commmand')
 		end 
 	end
-	
+	if blocks[1] == 'rektgroup' then
+		db:hset('groupBan:'..blocks[2], 'banned', '1')
+        bot_leave(blocks[2])
+		api.sendReply(msg, blocks[2]..' has been banned')
+	end
+
 	if blocks[1] == 'editmsg' then
 		print("printMessage")
 		local chatid = blocks[2] 

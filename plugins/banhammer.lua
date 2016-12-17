@@ -385,11 +385,6 @@ local action = function(msg, blocks, ln)
                 end
             end
 		end
-
-		if blocks[1] == 'rektgroup' then
-			db:hset('groupBan:'..blocks[2], 'banned', '1')
-			api.sendReply(msg, blocks[2]..' has been banned')
-		end
 	end
 end
 
@@ -412,7 +407,6 @@ return {
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
 		'^/(getrekt) ([%w]+)',
-        '^/(unrekt) ([%w]+)',
-		'^/(rektgroup) (-%d+)$'
+        '^/(unrekt) ([%w]+)'
 	}
 }
