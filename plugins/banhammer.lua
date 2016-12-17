@@ -306,8 +306,6 @@ return {
 		'^/(kick) (@[%w_]+)',
 		'^/(kick)',
 		'^/(kickid) (%d+)',
-		'^/(banlist)$',
-		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
 		'^/(ban)',
 		'^/(tempban) (%d+)',
