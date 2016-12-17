@@ -100,7 +100,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 				--print(id)
 				if sentMsgID ~= nil then
 					--print(sentMsgID)
-					db:hset(hash10, 'Message'..o, sentMsgID)x
+					db:hset(hash10, 'Message'..o, sentMsgID)
 					db:hset(hash10, 'adminID'..o, id)
 				end
 			end
