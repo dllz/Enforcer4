@@ -81,10 +81,10 @@ local action = function(msg, blocks, ln)
 			api.leaveChat(msg.chat.id)
 			return
 		end
-		if is_blocked_global(msg.adder.id) or is_blocked_global(msg.chat.id) then
-			api.sendMessage(msg.chat.id, '_You are blocked from using this bot_', true)
+		local groupBan = db:hget('groupBan:'..msg.chat.id, 'banned')
+		if groupBan == '1' then
+			api.sendMessage(msg.chat.id, "Your group has been banned from using Werewolf Enforcer")
 			api.leaveChat(msg.chat.id)
-			return
 		end
 		
 		cross.initGroup(msg.chat.id)
@@ -184,10 +184,6 @@ local action = function(msg, blocks, ln)
 	
 	--if the bot is removed from the chat
 	if blocks[1] == 'botremoved' then
-		
-		--remove the group settings
-		cross.remGroup(msg.chat.id, true)
-		
 		--save stats
         db:hincrby('bot:general', 'groups', -1)
 	end
