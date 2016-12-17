@@ -100,7 +100,7 @@ local function send_to_admin(mods, chat, msg_id, reporter, is_by_reply, chat_tit
 				--print(id)
 				if sentMsgID ~= nil then
 					--print(sentMsgID)
-					db:hset(hash10, 'Message'..o, sentMsgID)
+					db:hset(hash10, 'Message'..o, sentMsgID)x
 					db:hset(hash10, 'adminID'..o, id)
 				end
 			end
@@ -128,6 +128,8 @@ local action = function(msg, blocks, ln)
 			if is_report_blocked(msg) then
 				return
 			end
+			local alreadyFlagged = db:hget('flagged:'..msg.chat.id..':'..msg.message_id, 'solved')
+			if alreadyFlagged == 0 then return end
 			if is_moduser(msg) then return end
 			if msg.reply and ((tonumber(msg.reply.from.id) == tonumber(bot.id)) --[[or is_mod(msg.reply)]]) then
 				return
