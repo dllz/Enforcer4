@@ -213,6 +213,12 @@ pre_process = function(msg, ln)
 				api.sendMessage(msg.chat.id, msg.from.first_name..' has a history of: '..moti..' and has joined @werewolfsupport to appeal this ban')			
 			end
 		end
+
+		local groupBan = db:hget('groupBan:'..msg.chat.id, 'banned')
+		if groupBan == '1' then
+			api.sendMessage(msg.chat.id, "Your group has been banned from using Werewolf Enforcer")
+			api.leaveChat(msg.chat.id)
+		end
 		--print("by return")
 		local path = "./logs/MessageLog.txt"
 		file = io.open(path, "w")
