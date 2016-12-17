@@ -79,7 +79,7 @@ local function getBanList(chat_id, ln)
 			end
         end
 		print(i)
-        return text
+        return text, false
     end
 end
 
@@ -127,11 +127,13 @@ local action = function(msg, blocks, ln)
 			end
 			if blocks[1] == 'banlist' and not blocks[2] then
    				local banlist, is_empty = getBanList(msg.chat.id, ln)
+				print(banlist)
    				if is_empty then
 					api.sendReply(msg, banlist, true)
-   				else
+				else
 					local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
-					if code == 118 then 
+					if code == 118 then
+						print("Splitting list")
 						text = {}
 						text = split(banlist)
 						local size = tablelength(text)
