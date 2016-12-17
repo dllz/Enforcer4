@@ -31,8 +31,18 @@
       <file leaf-file-name="banhammer.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="150" column="46" lean-forward="false" selection-start-line="150" selection-start-column="46" selection-end-line="150" selection-end-column="46" />
+            <state relative-caret-position="-4482">
+              <caret line="13" column="3" lean-forward="false" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="users.lua" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plugins/users.lua">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4990">
+              <caret line="434" column="13" lean-forward="true" selection-start-line="434" selection-start-column="13" selection-end-line="434" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -233,7 +243,7 @@
       <updated>1481958920759</updated>
       <workItem from="1481958923716" duration="758000" />
       <workItem from="1481959705271" duration="6449000" />
-      <workItem from="1481972877847" duration="2686000" />
+      <workItem from="1481972877847" duration="3301000" />
     </task>
     <task id="LOCAL-00001" summary="Flagged repeat detection">
       <created>1481966677561</created>
@@ -291,11 +301,18 @@
       <option name="project" value="LOCAL" />
       <updated>1481975639951</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Reparing banlist&#10;">
+      <created>1481976026940</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1481976026940</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9893000" />
+    <option name="totallyTimeSpent" value="10508000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="260" y="25" width="1400" height="1000" extended-state="0" />
@@ -376,10 +393,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/plugins/users.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4990">
+          <caret line="434" column="13" lean-forward="true" selection-start-line="434" selection-start-column="13" selection-end-line="434" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/plugins/banhammer.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="150" column="46" lean-forward="false" selection-start-line="150" selection-start-column="46" selection-end-line="150" selection-end-column="46" />
+        <state relative-caret-position="-4482">
+          <caret line="13" column="3" lean-forward="false" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
           <folding />
         </state>
       </provider>
