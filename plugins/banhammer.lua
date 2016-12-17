@@ -79,7 +79,7 @@ local function getBanList(chat_id, ln)
 			end
         end
 		print(i)
-        return text, false
+        return text, false, i
     end
 end
 
@@ -126,19 +126,14 @@ local action = function(msg, blocks, ln)
 				return
 			end
 			if blocks[1] == 'banlist' and not blocks[2] then
-   				local banlist, is_empty = getBanList(msg.chat.id, ln)
+   				local banlist, is_empty, size = getBanList(msg.chat.id, ln)
 				--print(banlist)
    				if is_empty then
 					print("inside is empty")
 					api.sendReply(msg, banlist, true)
 				else
-					--local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
-					print("Sending Message")
-					local res, code = api.sendReply(msg, banlist)
-					print("Res Dump"..dump(res))
-					print(code)
-					if res == 118 then
-						print("Splitting list")
+					if size > 50 then
+						print("bigger than 50")
 						text = {}
 						text = split(banlist)
 						local size = tablelength(text)
@@ -150,8 +145,11 @@ local action = function(msg, blocks, ln)
 							if text[iteration] ~= nil then
 								local reses, codes = api.sendKeyboard(msg.chat.id, text[iteration], {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
 								print(code)
-							end 
-						end 
+							end
+						end
+					else
+						print("smaller than 50")
+						local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
 					end
    				end
    				return 
