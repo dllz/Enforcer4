@@ -13,6 +13,30 @@ local function cron()
 	end
 end
 
+function split(message)
+        if sep == nil then
+                sep = "%n"
+        end
+        local t={}
+		local i=1
+		local count=1
+		local text = ''
+        for str in string.gmatch(message, "([^"..sep.."]+)") do
+			--print(str)
+
+			text = text..str..'\n'
+			if  i % 50 == 0 then
+				--print(text)
+				t[count] = text
+				count = count + 1
+				text = ''
+			end
+			i = i + 1
+        end
+		--table.setn(t, i)
+        return t
+end
+
 local function get_user_id(msg, blocks)
 	if msg.cb then
 		return blocks[2]
@@ -33,6 +57,31 @@ local function get_nick(msg, blocks, sender)
 	end
 end
 
+local function getBanList(chat_id, ln)
+    local text = lang[ln].banhammer.banlist_header
+    local hash = 'chat:'..chat_id..':bannedlist'
+    local banned_users, mot = rdb.get(hash)
+    if not banned_users or not next(banned_users) then
+        return lang[ln].banhammer.banlist_empty, true
+    else
+        local i = 1
+        for banned_id,info in pairs(banned_users) do
+			if info.nick ~= nil then
+				text = text..'*'..i..'* - '..info.nick:mEscape()
+				if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
+				text = text..'\n'
+				i = i + 1
+			else
+				text = text..'*'..i..'* - '..'Unknown Name'
+				if info.why then text = text..'\n*⌦* '..info.why:mEscape() end
+				text = text..'\n'
+				i = i + 1
+			end
+        end
+		print(i)
+        return text, false, i
+    end
+end
 
 local function check_valid_time(temp)
 	temp = tonumber(temp)
@@ -76,6 +125,48 @@ local action = function(msg, blocks, ln)
 				api.sendReply(msg, lang[ln].kick_errors[2], true)
 				return
 			end
+			if blocks[1] == 'banlist' and not blocks[2] then
+   				local banlist, is_empty, size = getBanList(msg.chat.id, ln)
+				--print(banlist)
+   				if is_empty then
+					print("inside is empty")
+					api.sendReply(msg, banlist, true)
+				else
+					if size < 50 then
+						print("smaller than 50")
+						local res, code = api.sendKeyboard(msg.chat.id, banlist, {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
+					else
+					    local res, code = api.sendKeyboard(msg.chat.id, 'List to large please clean it or use /status', {inline_keyboard={{{text = 'Clean', callback_data = 'banlist-'}}}}, true)
+					end
+   				end
+   				return
+   			end
+		    if blocks[1] == 'banlist' and blocks[2] and blocks[2] == '-' then
+		    	local res, error = rdb.rem('chat:'..msg.chat.id..':bannedlist')
+		    	if res then
+		    		if msg.cb then --if cleaned via the inline button
+		    			api.editMessageText(msg.chat.id, msg.message_id, lang[ln].banhammer.banlist_cleaned..'\n`(Admin: '..msg.from.first_name:mEscape()..')`', false, true)
+		    		else --if cleaned via message
+		    			api.sendReply(msg, lang[ln].banhammer.banlist_cleaned, true)
+		    		end
+	    		else
+	    			local text
+	    			--get thetext
+		    		if error:match('hash does not exists') then
+		    			text = lang[ln].banhammer.banlist_empty
+		    		else
+		    			text = lang[ln].banhammer.banlist_error
+		    		end
+		    		--reply or edit
+		    		if msg.cb then
+		    			api.editMessageText(msg.chat.id, msg.message_id, text, false, true)
+		    		else
+		    			api.sendReply(msg, text, true)
+		    		end
+    			end
+    			return
+	    	end
+
 			if blocks[1] == 'kickid' then
 				local res, motivation = api.kickUser(msg.chat.id, blocks[2], ln)
 		    	if not res then
@@ -306,6 +397,8 @@ return {
 		'^/(kick) (@[%w_]+)',
 		'^/(kick)',
 		'^/(kickid) (%d+)',
+		'^/(banlist)$',
+		'^/(banlist) (-)$',
 		'^/(ban) (@[%w_]+)',
 		'^/(ban)',
 		'^/(tempban) (%d+)',
