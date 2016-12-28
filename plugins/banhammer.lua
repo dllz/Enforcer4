@@ -406,7 +406,7 @@ return {
 		'^/(unban)',
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
-		'^/(getrekt) ([%w]+)',
+		'^/(getrekt) (.+)$',
         '^/(unrekt) ([%w]+)'
 	}
 }
