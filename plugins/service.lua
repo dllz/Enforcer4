@@ -152,6 +152,9 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.')
 			return
 		end
+		if msg.added.id == 259509203 then
+			api.sendKeyboard(msg.chat.id, "Welcome the best troll in the history of Werewolf.", {inline_keyboard = {{{text = 'Ban', callback_data = 'ban:'..user_id}}}})
+		end
 		if config.admin.wwGlobalAdmins[msg.added.id] then 
 			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
