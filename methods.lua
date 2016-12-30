@@ -345,7 +345,7 @@ local function sendKeyboard(chat_id, text, keyboard, markdown)
 end
 
 local function sendMessage(chat_id, text, use_markdown, reply_to_message_id, send_sound)
-	print(string.len(text))
+	--print(string.len(text))
 	if string.len(text) >= 1024 then
 		api.sendMessage(chat_id, "Message to long, please adjust length.")
 		return
