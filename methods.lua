@@ -347,7 +347,7 @@ end
 local function sendMessage(chat_id, text, use_markdown, reply_to_message_id, send_sound)
 	--print(string.len(text))
 	if string.len(text) >= 1024 then
-		api.sendMessage(chat_id, "Message to long, please adjust length.")
+		api.sendMessage(chat_id, "Message to long, please decrease the number of characters used")
 		return
 	end
 	local url = BASE_URL .. '/sendMessage?chat_id=' .. chat_id .. '&text=' .. URL.escape(text)
