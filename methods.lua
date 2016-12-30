@@ -346,7 +346,10 @@ end
 
 local function sendMessage(chat_id, text, use_markdown, reply_to_message_id, send_sound)
 	--print(text)
-	
+	if string.len(text) >= 1024 then
+		api.sendMessage(chat_id, "Text to long")
+		return
+	end
 	local url = BASE_URL .. '/sendMessage?chat_id=' .. chat_id .. '&text=' .. URL.escape(text)
 
 	url = url .. '&disable_web_page_preview=true'
