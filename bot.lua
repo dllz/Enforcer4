@@ -18,7 +18,7 @@ bot_init = function(on_reload) -- The function run when the bot is started or re
 		return
 	end
 	print('Authenticating DB')
-	db:auth(bot.code)
+	db:auth(config.code)
 	print('Loading utilities.lua...')
 	cross, rdb = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	print('Loading languages.lua...')
