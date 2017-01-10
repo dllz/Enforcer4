@@ -17,6 +17,8 @@ bot_init = function(on_reload) -- The function run when the bot is started or re
 		print(clr.red..'API KEY MISSING!')
 		return
 	end
+	print('Authenticating DB')
+	db:auth(bot.code)
 	print('Loading utilities.lua...')
 	cross, rdb = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	print('Loading languages.lua...')

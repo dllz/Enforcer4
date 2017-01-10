@@ -253,7 +253,7 @@ local action = function(msg, blocks, ln)
 					end
 		    	else
 					db:hdel('chat:'..msg.chat.id..':userJoin', msg.from.id)
-		    		cross.saveBan(user_id, 'kick')
+						cross.saveBan(user_id, 'kick')
 		    		api.sendMessage(msg.chat.id, lang[ln].banhammer.kicked:build_text(get_nick(msg, false, true):mEscape(), get_nick(msg, blocks):mEscape()), true)
 		    	end
 	    	end
