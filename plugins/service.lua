@@ -166,7 +166,7 @@ local action = function(msg, blocks, ln)
 		local default_spam_value = 5
 		local max_time = 30
 		db:setex(addedSpam, max_time, msgs+1)
-		if msgs == default_spam_value+1 then
+		if msgs >= default_spam_value+1 then
 			return
 		end
 		local joinSpam = 'spam:added:'..msg.chat.id..':'..msg.added.id
@@ -175,7 +175,7 @@ local action = function(msg, blocks, ln)
 		local default_spam_value = 2
 		local max_time = 300
 		db:setex(joinSpam, max_time, msgs+1)
-		if msgs == default_spam_value+1 then
+		if msgs >= default_spam_value+1 then
 			return
 		end
 		local text = get_welcome(msg, ln)
