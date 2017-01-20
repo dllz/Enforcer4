@@ -39,7 +39,9 @@ pre_process = function(msg, ln)
         local max_msgs = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or default_spam_value
         if msg.cb then max_msgs = 15 end
         local max_time = 5
-        db:setex(spamhash, max_time, msgs+1)
+		if (os.time() - msg.date) < 30 then
+			db:setex(spamhash, max_time, msgs+1)
+		end
         if msgs == max_msgs+1 then
             local status = db:hget('chat:'..msg.chat.id..':settings', 'Flood') or 'yes'
             --how flood on/off works: yes->yes, antiflood is diabled. no->no, anti flood is not disbaled
