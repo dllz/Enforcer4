@@ -173,7 +173,7 @@ local action = function(msg, blocks, ln)
 			return
 		end
 		if msg.added.id == 9375804 then
-			api.sendMessage(msg.chat.id "Hello mother in law")
+			api.sendMessage(msg.chat.id, "Hello mother in law")
 			return
 		end
 		if msg.added.id == 106665913 then
