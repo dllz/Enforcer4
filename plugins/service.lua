@@ -118,7 +118,7 @@ local action = function(msg, blocks, ln)
 			local username = msg.added.username:lower()
 			if username:find('bot', -3) then return end
 		end
-		
+
 		if msg.added.id == 95890871 then
 			api.sendMessage(msg.chat.id, 'All hail KickLord. You can lynch him later')
 			return
@@ -140,24 +140,60 @@ local action = function(msg, blocks, ln)
 			api.sendMessage(msg.chat.id, 'NuteNuteNutella! I am hungry.. Feed me, bella! (and feel free to call for me. You know the way, right.. kick and bans <3)')
 			return
 		end
+		if msg.added.id == 218056872 then
+			api.sendMessage(msg.chat.id, "Welcome, Godfather. Here's your Fedora, Tommy Gun, and ban offers nobody can refuse.")
+			return
+		end
+		if msg.added.id == 213947461 then
+			api.sendMessage(msg.chat.id, "Welcome, Godmother. *plays piano* Speak softly, miss, and carry this: your banpistol")
+			return
+		end
+		if msg.added.id == 159289055 then
+			api.sendMessage(msg.chat.id, "Shit, I really don't know...")
+			return
+		end
+		if msg.added.id == 81772130 then
+			api.sendMessage(msg.chat.id, "Your a bad admin. Be a good admin - Budi")
+			return
+		end
 		if msg.added.id == 263451571 then
 			api.sendMessage(msg.chat.id, 'The Node Queen is here! This Vixen is ready to slay.')
 			return
 		end
-		if msg.added.id == 81772130 then
-			api.sendMessage(msg.chat.id, 'Your a bad admin. Be a good admin - Budi')
+		if msg.added.id == 221962247 then
+			api.sendMessage(msg.chat.id, "Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.")
 			return
 		end
-		if msg.added.id == 221962247 then
-			api.sendMessage(msg.chat.id, 'Uhm, who are you again? I may not remember for sure, but feel free to spread terror with your kagune here.')
+		if msg.added.id == 252424970 then
+			api.sendMessage(msg.chat.id, "Sheryl is here... I swear I will get her a kick immunity.")
+			return
+		end
+		if msg.added.id == 36702373 then
+			api.sendMessage(msg.chat.id, "Someone has a firestone? Cos Ponyta should evolve")
+			return
+		end
+		if msg.added.id == 9375804 then
+			api.sendMessage(msg.chat.id "Hello mother in law")
+			return
+		end
+		if msg.added.id == 106665913 then
+			api.sendMessage(msg.chat.id, "This is a known bug. No need to report.")
+			return
+		end
+		if msg.added.id == 96487504 then
+			api.sendMessage(msg.chat.id, "IT'S DIPPY!!!! Oh wait no...:((")
+			return
+		end
+		if msg.added.id == 33517996 then
+			api.sendMessage(msg.chat.id, "Hey Grunkle, where are Dippy and Mabel?")
+			return
+		end
+		if config.admin.wwGlobalAdmins[msg.added.id] then
+			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
 			return
 		end
 		if msg.added.id == 259509203 then
-			api.sendKeyboard(msg.chat.id, "Welcome the best troll in the history of Werewolf.", {inline_keyboard = {{{text = 'Ban', callback_data = 'ban:'..user_id}}}})
-		end
-		if config.admin.wwGlobalAdmins[msg.added.id] then 
-			api.sendMessage(msg.chat.id, 'Welcome, Werewolf senior admin.')
-			return
+			api.sendKeyboard(msg.chat.id, "", {inline_keyboard = {{{text = 'Ban', callback_data = 'ban:'..msg.added.id}}}})
 		end
 
 		local addedSpam = 'spam:added:'..msg.chat.id
