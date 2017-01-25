@@ -501,6 +501,8 @@ local action = function(msg, blocks, ln)
 		api.sendReply(msg, 'Time to recieve ping message: '..os.date("%M:%S", (os.time() - msg.date))..'\nAverage Messages per second in: '..(last_m/60)..'\nMessages recieved in the last minute: '..last_m)
 	elseif blocks[1] == 'enforce' then
 		api.sendReply(msg, '/ me now')
+	elseif blocks[1] == 'mark' then
+		api.sendReply(msg, blocks[2], true)
 	end
 end
 
@@ -525,6 +527,7 @@ return {
 		'^/(ping)$',
 		'^/(s)$',
 		'^/(me)$',
+		'^/(mark) (.*)$',
 
 		'^###cb:userbutton:(banuser):(%d+)$',
 		'^###cb:userbutton:(remwarns):(%d+)$',
