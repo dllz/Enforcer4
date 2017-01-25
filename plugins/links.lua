@@ -61,7 +61,7 @@ return {
 	triggers = {
 		'^/(link)$',
 		'^/(setlink)$',
-		'^/(setlink) https://telegram%.me/joinchat/(.*)',
+		'^/(setlink) https://t%.me/joinchat/(.*)',
 		'^/(setlink) (no)'
 	}
 }
