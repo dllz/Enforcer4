@@ -502,7 +502,10 @@ local action = function(msg, blocks, ln)
 	elseif blocks[1] == 'enforce' then
 		api.sendReply(msg, '/ me now')
 	elseif blocks[1] == 'mark' then
-		api.sendReply(msg, blocks[2], true)
+		res, code = api.sendReply(msg, blocks[2], true)
+		if not res then
+			api.SendReply(msg, res);
+		end
 	end
 end
 
