@@ -504,7 +504,7 @@ local action = function(msg, blocks, ln)
 	elseif blocks[1] == 'mark' then
 		res, code = api.sendReply(msg, blocks[2], true)
 		if not res then
-			api.sendReply(msg, res);
+			api.sendReply(msg, res.."");
 		end
 	end
 end
